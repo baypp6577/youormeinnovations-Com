@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HeroCanvas from '@/components/HeroCanvas.vue'
-import { contact } from '@/data/site'
+import { hero } from '@/data/site'
 </script>
 
 <template>
@@ -27,16 +27,16 @@ import { contact } from '@/data/site'
         class="animate-float-up mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-yom-gold-soft"
         style="animation-delay: 0.05s"
       >
-        PR · Community · Guided delivery
+        {{ hero.eyebrow }}
       </p>
 
       <h1
         class="animate-float-up font-display text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
         style="animation-delay: 0.12s"
       >
-        Empowering brands<br class="hidden sm:block" />
+        {{ hero.headline }}<br class="hidden sm:block" />
         <span class="bg-gradient-to-r from-white via-slate-100 to-yom-gold-soft bg-clip-text text-transparent">
-          and communities
+          {{ hero.headlineAccent }}
         </span>
       </h1>
 
@@ -44,9 +44,7 @@ import { contact } from '@/data/site'
         class="animate-float-up mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-200 sm:text-lg"
         style="animation-delay: 0.2s"
       >
-        You Or Me Innovations connects strategic PR with a guided, automated client journey — from first brief through
-        design approval to launch. Trusted by entrepreneurs, diaspora networks, and partners who want both heart and
-        precision.
+        {{ hero.description }}
       </p>
 
       <div
@@ -54,18 +52,20 @@ import { contact } from '@/data/site'
         style="animation-delay: 0.28s"
       >
         <a
-          :href="contact.portal"
-          target="_blank"
-          rel="noopener noreferrer"
+          :href="hero.primaryCta.href"
+          :target="hero.primaryCta.external ? '_blank' : undefined"
+          :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
           class="inline-flex min-w-[200px] items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-7 py-3.5 text-sm font-bold text-yom-navy shadow-lg shadow-yom-gold/30 transition hover:scale-[1.02] hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
         >
-          Start your project
+          {{ hero.primaryCta.label }}
         </a>
         <a
-          href="#workflow"
+          :href="hero.secondaryCta.href"
+          :target="hero.secondaryCta.external ? '_blank' : undefined"
+          :rel="hero.secondaryCta.external ? 'noopener noreferrer' : undefined"
           class="inline-flex min-w-[200px] items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
-          See how it works
+          {{ hero.secondaryCta.label }}
         </a>
       </div>
     </div>

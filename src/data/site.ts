@@ -1,78 +1,122 @@
-export const navLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'Services', href: '#services' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Team', href: '#team' },
-  { label: 'Blog', href: '#blog' },
-  { label: 'Contact', href: '#contact' },
-] as const
+import siteContent from './site-content.json'
 
-export const pillars = [
-  {
-    id: 'intelligence',
-    label: 'Value pillar',
-    title: 'AI-driven intelligence',
-    description:
-      'Smart workflows and clear reporting so every campaign decision is grounded in real data — not guesswork.',
-  },
-  {
-    id: 'community',
-    label: 'Value pillar',
-    title: 'Community collaboration',
-    description:
-      'Inclusive growth through diaspora networks, grassroots events, and partnerships that put people first.',
-  },
-  {
-    id: 'excellence',
-    label: 'Value pillar',
-    title: 'Strategic excellence',
-    description:
-      'PR, branding, and delivery aligned to your goals — from first brief through launch and handover.',
-  },
-] as const
+export type SectionStatus = 'live' | 'coming_soon'
 
-export const showcaseItems = [
-  {
-    id: 'globe',
-    title: 'Global reach',
-    subtitle: 'Community & diaspora campaigns',
-    type: 'globe' as const,
-  },
-  {
-    id: 'dashboard',
-    title: 'Client portal',
-    subtitle: 'Track every milestone live',
-    type: 'dashboard' as const,
-  },
-  {
-    id: 'workflow',
-    title: 'Automated workflow',
-    subtitle: 'Discovery → design → delivery',
-    type: 'workflow' as const,
-  },
-  {
-    id: 'growth',
-    title: 'Business growth',
-    subtitle: 'Before & after impact',
-    type: 'growth' as const,
-  },
-] as const
+export type ShowcaseType = 'globe' | 'dashboard' | 'workflow' | 'growth'
 
-export const footerLinks = {
-  company: [
-    { label: 'Home', href: '#home' },
-    { label: 'Services', href: '#services' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Team', href: '#team' },
-  ],
-  resources: [
-    { label: 'Blog', href: '#blog' },
-    { label: 'Contact', href: '#contact' },
-    { label: 'Client portal', href: 'https://hometolive.net/client/login?clientId=youorme' },
-  ],
-} as const
+export type SiteLink = {
+  label: string
+  href: string
+  external?: boolean
+}
 
-export const contact = {
-  email: 'yomiodeneye@hotmail.com',
-  portal: 'https://hometolive.net/client/login?clientId=youorme',
-} as const
+export type TeamMember = {
+  id: string
+  name: string
+  role: string
+  bio?: string
+}
+
+export type BlogPost = {
+  id: string
+  title: string
+  excerpt: string
+  date?: string
+  href?: string
+}
+
+export type SiteContent = {
+  brand: {
+    name: string
+    shortName: string
+    tagline: string
+  }
+  navLinks: Array<{ label: string; href: string }>
+  footerLinks: {
+    company: Array<{ label: string; href: string }>
+    resources: Array<{ label: string; href: string }>
+  }
+  contact: {
+    email: string
+    portal: string
+  }
+  hero: {
+    eyebrow: string
+    headline: string
+    headlineAccent: string
+    description: string
+    primaryCta: SiteLink
+    secondaryCta: SiteLink
+  }
+  services: {
+    eyebrow: string
+    title: string
+    pillars: Array<{
+      id: string
+      label: string
+      title: string
+      description: string
+    }>
+  }
+  workflow: {
+    eyebrow: string
+    title: string
+    description: string
+    cta: SiteLink
+    steps: Array<{ id: string; label: string; description: string }>
+  }
+  projects: {
+    eyebrow: string
+    title: string
+    description: string
+    items: Array<{
+      id: string
+      title: string
+      subtitle: string
+      type: ShowcaseType
+    }>
+  }
+  team: {
+    eyebrow: string
+    title: string
+    description: string
+    status: SectionStatus
+    placeholderMessage: string
+    members: TeamMember[]
+  }
+  blog: {
+    eyebrow: string
+    title: string
+    description: string
+    status: SectionStatus
+    placeholderMessage: string
+    posts: BlogPost[]
+  }
+}
+
+const content = siteContent as SiteContent
+
+export const brand = content.brand
+export const navLinks = content.navLinks
+export const footerLinks = content.footerLinks
+export const contact = content.contact
+export const hero = content.hero
+export const services = content.services
+export const workflow = content.workflow
+export const projects = content.projects
+export const team = content.team
+export const blog = content.blog
+
+/** @deprecated use services.pillars */
+export const pillars = services.pillars
+
+/** @deprecated use projects.items */
+export const showcaseItems = projects.items
+
+export function hasTeamContent(): boolean {
+  return team.members.length > 0
+}
+
+export function hasBlogContent(): boolean {
+  return blog.posts.length > 0
+}

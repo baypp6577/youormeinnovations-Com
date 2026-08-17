@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import * as d3 from 'd3'
-import { showcaseItems } from '@/data/site'
+import { projects, type ShowcaseType } from '@/data/site'
 
-type ShowcaseType = (typeof showcaseItems)[number]['type']
+const showcaseItems = projects.items
 
 const svgRef = ref<SVGSVGElement | null>(null)
-const activeId = ref<string>(showcaseItems[0].id)
+const activeId = ref<string>(showcaseItems[0]?.id ?? '')
 
 let timer = 0
 let spinFrame = 0
@@ -141,6 +141,7 @@ watch(activeId, (id) => {
 })
 
 onMounted(() => {
+  if (!showcaseItems.length) return
   render(showcaseItems[0].type)
   timer = window.setInterval(() => {
     const idx = showcaseItems.findIndex((s) => s.id === activeId.value)
@@ -159,11 +160,11 @@ onUnmounted(() => {
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-blue">Innovation showcase</p>
-          <h2 class="mt-3 font-display text-3xl font-bold text-yom-navy sm:text-4xl">How we deliver impact</h2>
+          <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-blue">{{ projects.eyebrow }}</p>
+          <h2 class="mt-3 font-display text-3xl font-bold text-yom-navy sm:text-4xl">{{ projects.title }}</h2>
         </div>
         <p class="max-w-md text-sm text-slate-600">
-          Real portal workflows and campaign intelligence — not generic stock dashboards.
+          {{ projects.description }}
         </p>
       </div>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { navLinks } from '@/data/site'
+import { brand, navLinks } from '@/data/site'
 </script>
 
 <template>
@@ -12,10 +12,10 @@ import { navLinks } from '@/data/site'
           class="flex h-11 w-11 items-center justify-center rounded-full border border-yom-gold/40 bg-gradient-to-br from-yom-blue to-yom-navy-light text-sm font-bold tracking-tight text-white shadow-lg shadow-yom-blue/20 transition group-hover:scale-105"
           aria-hidden="true"
         >
-          YOM
+          {{ brand.shortName }}
         </span>
         <span class="hidden font-display text-sm font-semibold uppercase tracking-[0.18em] text-white sm:block">
-          You Or Me Innovations
+          {{ brand.name }}
         </span>
       </a>
 

@@ -1,0 +1,123 @@
+{
+  "brand": {
+    "name": "You Or Me Innovations",
+    "shortName": "YOM",
+    "tagline": "PR, community partnerships, and guided digital delivery — connecting brands with the people who matter."
+  },
+  "navLinks": [
+    { "label": "Home", "href": "#home" },
+    { "label": "Services", "href": "#services" },
+    { "label": "Projects", "href": "#projects" },
+    { "label": "Team", "href": "#team" },
+    { "label": "Blog", "href": "#blog" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "footerLinks": {
+    "company": [
+      { "label": "Home", "href": "#home" },
+      { "label": "Services", "href": "#services" },
+      { "label": "Projects", "href": "#projects" },
+      { "label": "Team", "href": "#team" }
+    ],
+    "resources": [
+      { "label": "Blog", "href": "#blog" },
+      { "label": "Contact", "href": "#contact" },
+      { "label": "Client portal", "href": "https://hometolive.net/client/login?clientId=youorme" }
+    ]
+  },
+  "contact": {
+    "email": "yomiodeneye@hotmail.com",
+    "portal": "https://hometolive.net/client/login?clientId=youorme"
+  },
+  "hero": {
+    "eyebrow": "PR · Community · Guided delivery",
+    "headline": "Empowering brands",
+    "headlineAccent": "and communities",
+    "description": "You Or Me Innovations connects strategic PR with a guided, automated client journey — from first brief through design approval to launch. Trusted by entrepreneurs, diaspora networks, and partners who want both heart and precision.",
+    "primaryCta": { "label": "Start your project", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "secondaryCta": { "label": "See how it works", "href": "#workflow", "external": false }
+  },
+  "services": {
+    "eyebrow": "What we stand for",
+    "title": "Three pillars of delivery",
+    "pillars": [
+      {
+        "id": "intelligence",
+        "label": "Value pillar",
+        "title": "AI-driven intelligence",
+        "description": "Smart workflows and clear reporting so every campaign decision is grounded in real data — not guesswork."
+      },
+      {
+        "id": "community",
+        "label": "Value pillar",
+        "title": "Community collaboration",
+        "description": "Inclusive growth through diaspora networks, grassroots events, and partnerships that put people first."
+      },
+      {
+        "id": "excellence",
+        "label": "Value pillar",
+        "title": "Strategic excellence",
+        "description": "PR, branding, and delivery aligned to your goals — from first brief through launch and handover."
+      }
+    ]
+  },
+  "workflow": {
+    "eyebrow": "Client experience",
+    "title": "Automated from brief to launch",
+    "description": "Every client gets a private portal — track milestones, approve designs, and receive updates by email as cards move through discovery, design, build, and launch.",
+    "cta": { "label": "Open client portal →", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "steps": [
+      { "id": "discovery", "label": "Discovery", "description": "Requirements & brief" },
+      { "id": "design", "label": "Design", "description": "Approve visuals & copy" },
+      { "id": "build", "label": "Build", "description": "Development & integrations" },
+      { "id": "launch", "label": "Launch", "description": "Go live & handover" }
+    ]
+  },
+  "projects": {
+    "eyebrow": "Innovation showcase",
+    "title": "How we deliver impact",
+    "description": "Real portal workflows and campaign intelligence — not generic stock dashboards.",
+    "items": [
+      {
+        "id": "globe",
+        "title": "Global reach",
+        "subtitle": "Community & diaspora campaigns",
+        "type": "globe"
+      },
+      {
+        "id": "dashboard",
+        "title": "Client portal",
+        "subtitle": "Track every milestone live",
+        "type": "dashboard"
+      },
+      {
+        "id": "workflow",
+        "title": "Automated workflow",
+        "subtitle": "Discovery → design → delivery",
+        "type": "workflow"
+      },
+      {
+        "id": "growth",
+        "title": "Business growth",
+        "subtitle": "Before & after impact",
+        "type": "growth"
+      }
+    ]
+  },
+  "team": {
+    "eyebrow": "People behind the work",
+    "title": "Our team",
+    "description": "Strategists, creatives, and community builders who bring campaigns and client projects to life.",
+    "status": "coming_soon",
+    "placeholderMessage": "Team profiles are being finalised — content will appear here as soon as copy and photos are approved.",
+    "members": []
+  },
+  "blog": {
+    "eyebrow": "Insights & updates",
+    "title": "From the studio",
+    "description": "PR tips, community stories, and behind-the-scenes notes from You Or Me Innovations.",
+    "status": "coming_soon",
+    "placeholderMessage": "Articles are in progress — the first posts will land here once editorial copy is ready.",
+    "posts": []
+  }
+}

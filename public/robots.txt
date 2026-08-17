@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Generic paths only — never publish hidden admin prefixes in robots.txt.
+Disallow: /api/
+Disallow: /admin/

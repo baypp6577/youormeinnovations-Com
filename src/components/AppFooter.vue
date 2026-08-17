@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { contact, footerLinks } from '@/data/site'
+import { brand, contact, footerLinks } from '@/data/site'
 </script>
 
 <template>
@@ -11,12 +11,12 @@ import { contact, footerLinks } from '@/data/site'
             class="flex h-12 w-12 items-center justify-center rounded-full border border-yom-gold/30 bg-yom-navy-light text-sm font-bold text-white"
             aria-hidden="true"
           >
-            YOM
+            {{ brand.shortName }}
           </span>
-          <p class="font-display text-lg font-semibold text-white">You Or Me Innovations</p>
+          <p class="font-display text-lg font-semibold text-white">{{ brand.name }}</p>
         </div>
         <p class="max-w-md text-sm leading-relaxed text-slate-300">
-          PR, community partnerships, and guided digital delivery — connecting brands with the people who matter.
+          {{ brand.tagline }}
         </p>
       </div>
 
@@ -52,7 +52,7 @@ import { contact, footerLinks } from '@/data/site'
     </div>
 
     <div class="border-t border-white/10 py-5 text-center text-xs text-slate-400">
-      © {{ new Date().getFullYear() }} You Or Me Innovations. All rights reserved.
+      © {{ new Date().getFullYear() }} {{ brand.name }}. All rights reserved.
     </div>
   </footer>
 </template>
