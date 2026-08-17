@@ -23,6 +23,16 @@ npm run build
 npm run preview
 ```
 
+## Vercel test site
+
+Connect this repo in [Vercel](https://vercel.com) (Import → `youormeinnovations-Com`). Default production URL:
+
+**https://youormeinnovations-com.vercel.app**
+
+`vercel.json` is included for Vite static output. After the first deploy, YouOrMe clients see **Open test site** on the hometolive.net client portal (`clientId=youorme`).
+
+Optional: set `NEXT_PUBLIC_YOUORME_PREVIEW_URL` on hometolive.net Vercel if the URL differs.
+
 ## Design notes
 
 - Layout: header → hero → pillars → workflow → showcase → footer
