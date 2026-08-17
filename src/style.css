@@ -54,6 +54,6 @@ body {
   animation: float-up 0.8s ease-out both;
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 4s ease-in-out infinite;
+.animate-hero-pulse-glow {
+  animation: pulse-glow var(--hero-pulse-duration, 10s) ease-in-out infinite;
 }

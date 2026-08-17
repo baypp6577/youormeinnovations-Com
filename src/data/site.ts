@@ -38,6 +38,8 @@ export type SiteContent = {
   }
   contact: {
     email: string
+    phone?: string
+    website?: string
     portal: string
   }
   hero: {
@@ -47,6 +49,7 @@ export type SiteContent = {
     description: string
     primaryCta: SiteLink
     secondaryCta: SiteLink
+    tertiaryCta?: SiteLink
   }
   services: {
     eyebrow: string

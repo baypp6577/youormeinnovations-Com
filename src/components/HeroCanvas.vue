@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import * as d3 from 'd3'
+import { heroBackgroundAnimation } from '@/config/hero-background'
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
+const { particleSpeed, linkDistance } = heroBackgroundAnimation
 
 type Node = { x: number; y: number; vx: number; vy: number; r: number }
 
@@ -14,8 +16,8 @@ function initNodes(width: number, height: number) {
   nodes = d3.range(count).map(() => ({
     x: Math.random() * width,
     y: Math.random() * height,
-    vx: (Math.random() - 0.5) * 0.35,
-    vy: (Math.random() - 0.5) * 0.35,
+    vx: (Math.random() - 0.5) * particleSpeed,
+    vy: (Math.random() - 0.5) * particleSpeed,
     r: 1.2 + Math.random() * 2,
   }))
 }
@@ -47,7 +49,6 @@ function draw() {
     if (node.y < 0 || node.y > height) node.vy *= -1
   }
 
-  const linkDistance = 120
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
       const a = nodes[i]

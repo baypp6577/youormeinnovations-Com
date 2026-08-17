@@ -2,7 +2,7 @@
   "brand": {
     "name": "You Or Me Innovations",
     "shortName": "YOM",
-    "tagline": "PR, community partnerships, and guided digital delivery — connecting brands with the people who matter."
+    "tagline": "Connecting global brands with local audiences — AI-powered marketing, strategic PR, human connection, measurable impact."
   },
   "navLinks": [
     { "label": "Home", "href": "#home" },
@@ -17,89 +17,92 @@
       { "label": "Home", "href": "#home" },
       { "label": "Services", "href": "#services" },
       { "label": "Projects", "href": "#projects" },
-      { "label": "Team", "href": "#team" }
+      { "label": "Blog", "href": "#blog" }
     ],
     "resources": [
-      { "label": "Blog", "href": "#blog" },
-      { "label": "Contact", "href": "#contact" },
-      { "label": "Client portal", "href": "https://hometolive.net/client/login?clientId=youorme" }
+      { "label": "Start your project", "href": "https://hometolive.net/client/login?clientId=youorme" },
+      { "label": "Client portal", "href": "https://hometolive.net/client/login?clientId=youorme" },
+      { "label": "Contact", "href": "#contact" }
     ]
   },
   "contact": {
     "email": "yomiodeneye@hotmail.com",
+    "phone": "+44 7989 124745",
+    "website": "https://youormeinnovations.com",
     "portal": "https://hometolive.net/client/login?clientId=youorme"
   },
   "hero": {
-    "eyebrow": "PR · Community · Guided delivery",
-    "headline": "Empowering brands",
-    "headlineAccent": "and communities",
-    "description": "You Or Me Innovations connects strategic PR with a guided, automated client journey — from first brief through design approval to launch. Trusted by entrepreneurs, diaspora networks, and partners who want both heart and precision.",
+    "eyebrow": "AI-powered digital marketing · PR · brand growth",
+    "headline": "Connecting global brands",
+    "headlineAccent": "with local audiences",
+    "description": "You Or Me Innovations helps businesses, startups and organisations get noticed, build stronger brands and connect with the audiences that matter. We combine AI-powered digital marketing, PR, content, branding and community engagement to turn ideas into measurable impact.",
     "primaryCta": { "label": "Start your project", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
-    "secondaryCta": { "label": "See how it works", "href": "#workflow", "external": false }
+    "secondaryCta": { "label": "Explore our services", "href": "#services", "external": false }
   },
   "services": {
-    "eyebrow": "What we stand for",
-    "title": "Three pillars of delivery",
+    "eyebrow": "Why YOM?",
+    "title": "We connect the pieces",
     "pillars": [
       {
         "id": "intelligence",
         "label": "Value pillar",
-        "title": "AI-driven intelligence",
-        "description": "Smart workflows and clear reporting so every campaign decision is grounded in real data — not guesswork."
+        "title": "AI-powered intelligence",
+        "description": "We use modern AI and digital tools to improve research, content, workflows and marketing decisions."
       },
       {
         "id": "community",
         "label": "Value pillar",
-        "title": "Community collaboration",
-        "description": "Inclusive growth through diaspora networks, grassroots events, and partnerships that put people first."
+        "title": "Human connection",
+        "description": "Technology is powerful, but people build relationships. Our approach combines automation with genuine human understanding."
       },
       {
         "id": "excellence",
         "label": "Value pillar",
-        "title": "Strategic excellence",
-        "description": "PR, branding, and delivery aligned to your goals — from first brief through launch and handover."
+        "title": "Cultural intelligence",
+        "description": "We understand the importance of relevance, culture and community when brands communicate across markets."
       }
     ]
   },
   "workflow": {
-    "eyebrow": "Client experience",
-    "title": "Automated from brief to launch",
-    "description": "Every client gets a private portal — track milestones, approve designs, and receive updates by email as cards move through discovery, design, build, and launch.",
-    "cta": { "label": "Open client portal →", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "eyebrow": "Our process",
+    "title": "From idea to impact",
+    "description": "Your project. Your portal. Your progress. Clients can access a dedicated project environment to track progress, review work, approve designs and stay connected from the initial brief through delivery.",
+    "cta": { "label": "Access client portal →", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
     "steps": [
-      { "id": "discovery", "label": "Discovery", "description": "Requirements & brief" },
-      { "id": "design", "label": "Design", "description": "Approve visuals & copy" },
-      { "id": "build", "label": "Build", "description": "Development & integrations" },
-      { "id": "launch", "label": "Launch", "description": "Go live & handover" }
+      { "id": "discover", "label": "Discover", "description": "Listen, understand goals and identify the opportunity" },
+      { "id": "strategise", "label": "Strategise", "description": "Turn objectives into a practical marketing or PR plan" },
+      { "id": "create", "label": "Create", "description": "Develop content, campaigns and creative assets" },
+      { "id": "launch", "label": "Launch", "description": "Put the plan into action and reach the right audience" },
+      { "id": "measure", "label": "Measure & improve", "description": "Review performance and identify the next opportunity" }
     ]
   },
   "projects": {
-    "eyebrow": "Innovation showcase",
-    "title": "How we deliver impact",
-    "description": "Real portal workflows and campaign intelligence — not generic stock dashboards.",
+    "eyebrow": "Projects & portfolio",
+    "title": "Work that makes a difference",
+    "description": "Real projects. Real people. Real impact. Explore selected campaigns, communications projects, digital experiences and community initiatives delivered through You Or Me Innovations.",
     "items": [
       {
         "id": "globe",
-        "title": "Global reach",
-        "subtitle": "Community & diaspora campaigns",
+        "title": "PR & communications",
+        "subtitle": "Brand stories that build credibility",
         "type": "globe"
       },
       {
         "id": "dashboard",
-        "title": "Client portal",
-        "subtitle": "Track every milestone live",
+        "title": "Digital marketing",
+        "subtitle": "Campaigns that reach the right audience",
         "type": "dashboard"
       },
       {
         "id": "workflow",
-        "title": "Automated workflow",
-        "subtitle": "Discovery → design → delivery",
+        "title": "Branding & creative",
+        "subtitle": "Identity and messaging that stand apart",
         "type": "workflow"
       },
       {
-        "id": "growth",
-        "title": "Business growth",
-        "subtitle": "Before & after impact",
+        "id": "community",
+        "title": "Community campaigns",
+        "subtitle": "Grassroots engagement and activation",
         "type": "growth"
       }
     ]
@@ -109,13 +112,13 @@
     "title": "Our team",
     "description": "Strategists, creatives, and community builders who bring campaigns and client projects to life.",
     "status": "coming_soon",
-    "placeholderMessage": "Team profiles are being finalised — content will appear here as soon as copy and photos are approved.",
+    "placeholderMessage": "Team profiles are being finalised — content will appear here once approved on the client portal.",
     "members": []
   },
   "blog": {
-    "eyebrow": "Insights & updates",
-    "title": "From the studio",
-    "description": "PR tips, community stories, and behind-the-scenes notes from You Or Me Innovations.",
+    "eyebrow": "Blog",
+    "title": "Ideas, insights & opportunities",
+    "description": "Stay informed. Stay inspired. Stay ahead. Explore insights on digital marketing, PR, AI, entrepreneurship, African and diaspora markets, and business growth.",
     "status": "coming_soon",
     "placeholderMessage": "Articles are in progress — the first posts will land here once editorial copy is ready.",
     "posts": []

@@ -42,9 +42,24 @@ import { brand, contact, footerLinks } from '@/data/site'
               {{ link.label }}
             </a>
           </li>
+          <li v-if="contact.phone">
+            <a :href="`tel:${contact.phone.replace(/\s/g, '')}`" class="text-slate-300 transition hover:text-white">
+              {{ contact.phone }}
+            </a>
+          </li>
           <li>
             <a :href="`mailto:${contact.email}`" class="text-slate-300 transition hover:text-white">
               {{ contact.email }}
+            </a>
+          </li>
+          <li v-if="contact.website">
+            <a
+              :href="contact.website"
+              class="text-slate-300 transition hover:text-white"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ contact.website.replace(/^https?:\/\//, '') }}
             </a>
           </li>
         </ul>

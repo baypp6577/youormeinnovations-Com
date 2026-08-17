@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import HeroCanvas from '@/components/HeroCanvas.vue'
+import { heroBackgroundAnimation } from '@/config/hero-background'
 import { hero } from '@/data/site'
+
+const heroBgStyle = {
+  '--hero-pulse-duration': `${heroBackgroundAnimation.pulseGlowDurationSec}s`,
+} as Record<string, string>
 </script>
 
 <template>
   <section
     id="home"
     class="relative overflow-hidden bg-gradient-to-br from-yom-navy via-yom-navy-light to-[#1a3a6b] text-white"
+    :style="heroBgStyle"
   >
     <HeroCanvas />
 
@@ -14,11 +20,11 @@ import { hero } from '@/data/site'
     <div class="pointer-events-none absolute inset-0 bg-yom-navy/55" aria-hidden="true" />
 
     <div
-      class="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-yom-blue/20 blur-3xl animate-pulse-glow"
+      class="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-yom-blue/20 blur-3xl animate-hero-pulse-glow"
       aria-hidden="true"
     />
     <div
-      class="pointer-events-none absolute -right-16 bottom-10 h-64 w-64 rounded-full bg-yom-gold/15 blur-3xl animate-pulse-glow"
+      class="pointer-events-none absolute -right-16 bottom-10 h-64 w-64 rounded-full bg-yom-gold/15 blur-3xl animate-hero-pulse-glow"
       aria-hidden="true"
     />
 
@@ -48,7 +54,7 @@ import { hero } from '@/data/site'
       </p>
 
       <div
-        class="animate-float-up mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
+        class="animate-float-up mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap"
         style="animation-delay: 0.28s"
       >
         <a
@@ -66,6 +72,15 @@ import { hero } from '@/data/site'
           class="inline-flex min-w-[200px] items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           {{ hero.secondaryCta.label }}
+        </a>
+        <a
+          v-if="hero.tertiaryCta"
+          :href="hero.tertiaryCta.href"
+          :target="hero.tertiaryCta.external ? '_blank' : undefined"
+          :rel="hero.tertiaryCta.external ? 'noopener noreferrer' : undefined"
+          class="inline-flex min-w-[200px] items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          {{ hero.tertiaryCta.label }}
         </a>
       </div>
     </div>
