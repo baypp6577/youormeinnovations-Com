@@ -22,6 +22,8 @@ import { finalCta } from '@/data/site'
           :href="finalCta.secondaryCta.href"
           :target="finalCta.secondaryCta.external ? '_blank' : undefined"
           :rel="finalCta.secondaryCta.external ? 'noopener noreferrer' : undefined"
+          data-contact-subject="Contact Us — Ready to grow"
+          data-contact-source="Final CTA"
           class="inline-flex rounded-full border border-white/30 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
         >
           {{ finalCta.secondaryCta.label }}

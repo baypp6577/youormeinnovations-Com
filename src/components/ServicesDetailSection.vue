@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ContactCta from '@/components/ContactCta.vue'
 import { servicesDetail } from '@/data/site'
 </script>
 
@@ -32,9 +33,12 @@ import { servicesDetail } from '@/data/site'
             </li>
           </ul>
 
-          <p v-if="item.cta" class="mt-5 text-sm font-semibold text-yom-blue">
-            {{ item.cta }}
-          </p>
+          <ContactCta
+            v-if="item.cta"
+            :label="item.cta"
+            :subject="`${item.cta} — ${item.title}`"
+            :source="`Service: ${item.title}`"
+          />
         </article>
       </div>
     </div>

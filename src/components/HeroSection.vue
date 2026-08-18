@@ -97,6 +97,8 @@ onUnmounted(() => observer?.disconnect())
           :href="hero.tertiaryCta.href"
           :target="hero.tertiaryCta.external ? '_blank' : undefined"
           :rel="hero.tertiaryCta.external ? 'noopener noreferrer' : undefined"
+          data-contact-subject="Contact Us — Homepage hero"
+          data-contact-source="Homepage hero"
           class="inline-flex min-w-[200px] items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           {{ hero.tertiaryCta.label }}

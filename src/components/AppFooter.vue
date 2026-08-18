@@ -19,7 +19,12 @@ import BrandLogo from '@/components/BrandLogo.vue'
         <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-yom-gold">Company</h2>
         <ul class="space-y-2 text-sm">
           <li v-for="link in footerLinks.company" :key="link.href">
-            <a :href="link.href" class="text-slate-300 transition hover:text-white">{{ link.label }}</a>
+            <a
+              :href="link.href"
+              :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Footer' : undefined"
+              :data-contact-source="link.href === '#contact-section' ? 'Footer company links' : undefined"
+              class="text-slate-300 transition hover:text-white"
+            >{{ link.label }}</a>
           </li>
         </ul>
       </div>
@@ -37,14 +42,14 @@ import BrandLogo from '@/components/BrandLogo.vue'
               {{ link.label }}
             </a>
           </li>
-          <li v-if="contact.phone">
-            <a :href="`tel:${contact.phone.replace(/\s/g, '')}`" class="text-slate-300 transition hover:text-white">
-              {{ contact.phone }}
-            </a>
-          </li>
           <li>
-            <a :href="`mailto:${contact.email}`" class="text-slate-300 transition hover:text-white">
-              {{ contact.email }}
+            <a
+              href="#contact-section"
+              data-contact-subject="General enquiry — Footer"
+              data-contact-source="Footer"
+              class="text-slate-300 transition hover:text-white"
+            >
+              Send a message
             </a>
           </li>
           <li v-if="contact.website">

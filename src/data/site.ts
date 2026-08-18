@@ -68,8 +68,6 @@ export type SiteContent = {
     legal: Array<{ label: string; href: string }>
   }
   contact: {
-    email: string
-    phone?: string
     website?: string
     socialNote?: string
     portal: string

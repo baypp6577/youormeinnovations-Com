@@ -156,8 +156,7 @@ export function buildKnowledge(): KnowledgeChunk[] {
     keywords: ['contact', 'email', 'phone', 'whatsapp', 'enquiry', 'talk'],
     text: [
       contactSection.description,
-      `Email: ${contact.email}`,
-      contact.phone ? `Phone / WhatsApp: ${contact.phone}` : '',
+      'Use the website contact form to send a message. We do not publish a phone number or email address.',
       contact.website ? `Website: ${contact.website}` : '',
     ]
       .filter(Boolean)
@@ -223,10 +222,9 @@ export function answerQuestion(userInput: string): AssistantReply {
   }
 
   if (/\b(contact|email|phone|whatsapp|get in touch|reach|enquiry|inquiry)\b/.test(q)) {
-    const phone = contact.phone ? `\nPhone / WhatsApp: ${contact.phone}` : ''
     return {
-      text: `${contactSection.title}\n\n${contactSection.description}\n\nEmail: ${contact.email}${phone}`,
-      navigation: { url: '#contact-section', label: 'Open contact' },
+      text: `${contactSection.title}\n\n${contactSection.description}\n\nPlease use the contact form on this page. We will reply by email.`,
+      navigation: { url: '#contact-section', label: 'Open contact form' },
     }
   }
 

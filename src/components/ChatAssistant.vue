@@ -3,6 +3,7 @@ import { nextTick, ref, watch } from 'vue'
 import { answerQuestion } from '@/lib/assistant'
 import { brand } from '@/data/site'
 import BrandLogo from '@/components/BrandLogo.vue'
+import { openContactForm } from '@/lib/contact'
 
 type ChatMessage = {
   id: string
@@ -64,7 +65,11 @@ function followLink(url: string) {
     window.open(url, '_blank', 'noopener,noreferrer')
     return
   }
-  window.location.hash = url.replace(/^#/, '')
+  if (url.includes('contact')) {
+    openContactForm('Chat assistant enquiry', 'Chat assistant')
+  } else {
+    window.location.hash = url.replace(/^#/, '')
+  }
   isOpen.value = false
 }
 

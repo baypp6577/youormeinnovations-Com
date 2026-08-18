@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ContactCta from '@/components/ContactCta.vue'
 import { packages } from '@/data/site'
 </script>
 
@@ -25,9 +26,11 @@ import { packages } from '@/data/site'
           <p class="mt-4 text-sm font-medium text-slate-700">
             Ideal for: {{ item.idealFor }}
           </p>
-          <p class="mt-5 text-sm font-semibold text-yom-blue">
-            {{ item.cta }}
-          </p>
+          <ContactCta
+            :label="item.cta"
+            :subject="`${item.cta} — ${item.name}`"
+            :source="`PR package: ${item.name}`"
+          />
         </article>
       </div>
     </div>

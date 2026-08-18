@@ -36,8 +36,6 @@
     ]
   },
   "contact": {
-    "email": "yomiodeneye@hotmail.com",
-    "phone": "+44 7989 124745",
     "website": "https://youormeinnovations.com",
     "socialNote": "Social links will be added once approved on the client portal.",
     "portal": "https://hometolive.net/client/login?clientId=youorme"
@@ -277,7 +275,7 @@
   "contactSection": {
     "eyebrow": "Let’s Talk",
     "title": "Have an idea, project or opportunity?",
-    "description": "Tell us a little about what you are trying to achieve and we’ll help you identify the best way forward.",
+    "description": "Tell us a little about what you are trying to achieve and we’ll help you identify the best way forward. The form is the best way to reach us.",
     "services": [
       "Digital Marketing",
       "PR & Communications",

@@ -57,6 +57,8 @@ onUnmounted(() => {
           v-for="link in navLinks"
           :key="link.href"
           :href="link.href"
+          :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
+          :data-contact-source="link.href === '#contact-section' ? 'Header navigation' : undefined"
           class="rounded-full px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
           :class="link.href === '#home' ? 'bg-white/10 text-white' : ''"
         >
@@ -103,6 +105,8 @@ onUnmounted(() => {
           v-for="link in navLinks"
           :key="link.href"
           :href="link.href"
+          :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
+          :data-contact-source="link.href === '#contact-section' ? 'Mobile navigation' : undefined"
           class="rounded-xl px-4 py-3 text-base font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
           @click="closeMenu"
         >

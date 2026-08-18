@@ -13,6 +13,8 @@ import { about } from '@/data/site'
           :href="about.cta.href"
           :target="about.cta.external ? '_blank' : undefined"
           :rel="about.cta.external ? 'noopener noreferrer' : undefined"
+          data-contact-subject="Work With Us — About"
+          data-contact-source="About section"
           class="mt-8 inline-flex rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-5 py-3 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/20 transition hover:brightness-105"
         >
           {{ about.cta.label }}
