@@ -14,7 +14,7 @@ import { finalCta } from '@/data/site'
           :href="finalCta.primaryCta.href"
           :target="finalCta.primaryCta.external ? '_blank' : undefined"
           :rel="finalCta.primaryCta.external ? 'noopener noreferrer' : undefined"
-          class="inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-yom-navy transition hover:brightness-95"
+          class="inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-yom-navy [touch-action:manipulation]"
         >
           {{ finalCta.primaryCta.label }}
         </a>

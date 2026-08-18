@@ -6,10 +6,14 @@ import { projects, type ShowcaseType } from '@/data/site'
 const showcaseItems = projects.items
 
 const svgRef = ref<SVGSVGElement | null>(null)
+const sectionRef = ref<HTMLElement | null>(null)
 const activeId = ref<string>(showcaseItems[0]?.id ?? '')
 
 let timer = 0
 let spinFrame = 0
+let sectionVisible = true
+let observer: IntersectionObserver | null = null
+let reduceMotion = false
 
 function render(type: ShowcaseType) {
   cancelAnimationFrame(spinFrame)
@@ -35,6 +39,7 @@ function render(type: ShowcaseType) {
     let lambda = 0
 
     function spin() {
+      if (!sectionVisible || document.hidden) return
       projection.rotate([lambda, -12])
       g.selectAll('path').attr('d', path as never)
       lambda += 0.3
@@ -55,7 +60,7 @@ function render(type: ShowcaseType) {
       .attr('stroke', 'rgba(201,162,39,0.55)')
       .attr('stroke-width', 1.5)
 
-    spin()
+    if (!reduceMotion) spin()
     return
   }
 
@@ -142,21 +147,40 @@ watch(activeId, (id) => {
 
 onMounted(() => {
   if (!showcaseItems.length) return
+  reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   render(showcaseItems[0].type)
+  if (reduceMotion) return
+
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      sectionVisible = Boolean(entry?.isIntersecting)
+      if (sectionVisible) {
+        const item = showcaseItems.find((s) => s.id === activeId.value)
+        if (item?.type === 'globe') render('globe')
+      } else {
+        cancelAnimationFrame(spinFrame)
+      }
+    },
+    { rootMargin: '80px' },
+  )
+  if (sectionRef.value) observer.observe(sectionRef.value)
+
   timer = window.setInterval(() => {
+    if (!sectionVisible) return
     const idx = showcaseItems.findIndex((s) => s.id === activeId.value)
     activeId.value = showcaseItems[(idx + 1) % showcaseItems.length].id
   }, 4000)
 })
 
 onUnmounted(() => {
+  observer?.disconnect()
   window.clearInterval(timer)
   cancelAnimationFrame(spinFrame)
 })
 </script>
 
 <template>
-  <section id="projects" class="py-20 sm:py-24">
+  <section id="projects" ref="sectionRef" class="py-20 sm:py-24">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>

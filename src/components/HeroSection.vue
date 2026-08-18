@@ -1,17 +1,36 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from 'vue'
 import HeroCanvas from '@/components/HeroCanvas.vue'
 import { heroBackgroundAnimation } from '@/config/hero-background'
 import { hero } from '@/data/site'
 
+const sectionRef = ref<HTMLElement | null>(null)
+const heroInView = ref(true)
+let observer: IntersectionObserver | null = null
+
 const heroBgStyle = {
   '--hero-pulse-duration': `${heroBackgroundAnimation.pulseGlowDurationSec}s`,
 } as Record<string, string>
+
+onMounted(() => {
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      heroInView.value = Boolean(entry?.isIntersecting)
+    },
+    { rootMargin: '80px' },
+  )
+  if (sectionRef.value) observer.observe(sectionRef.value)
+})
+
+onUnmounted(() => observer?.disconnect())
 </script>
 
 <template>
   <section
     id="home"
+    ref="sectionRef"
     class="relative overflow-hidden bg-gradient-to-br from-yom-navy via-yom-navy-light to-[#1a3a6b] text-white"
+    :class="{ 'hero-offscreen': !heroInView }"
     :style="heroBgStyle"
   >
     <HeroCanvas />

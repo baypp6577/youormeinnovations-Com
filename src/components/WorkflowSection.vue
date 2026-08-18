@@ -3,19 +3,36 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { workflow } from '@/data/site'
 
 const active = ref(0)
+const sectionRef = ref<HTMLElement | null>(null)
 let timer = 0
+let observer: IntersectionObserver | null = null
+let sectionVisible = true
 
 onMounted(() => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  observer = new IntersectionObserver(
+    ([entry]) => {
+      sectionVisible = Boolean(entry?.isIntersecting)
+    },
+    { rootMargin: '80px' },
+  )
+  if (sectionRef.value) observer.observe(sectionRef.value)
+
   timer = window.setInterval(() => {
+    if (!sectionVisible) return
     active.value = (active.value + 1) % workflow.steps.length
   }, 2800)
 })
 
-onUnmounted(() => window.clearInterval(timer))
+onUnmounted(() => {
+  observer?.disconnect()
+  window.clearInterval(timer)
+})
 </script>
 
 <template>
-  <section id="workflow" class="relative overflow-hidden bg-yom-navy py-20 text-white sm:py-24">
+  <section id="workflow" ref="sectionRef" class="relative overflow-hidden bg-yom-navy py-20 text-white sm:py-24">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(47,111,237,0.25),transparent_50%)]" />
 
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

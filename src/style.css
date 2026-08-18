@@ -61,3 +61,7 @@ body {
 .animate-hero-pulse-glow {
   animation: pulse-glow var(--hero-pulse-duration, 10s) ease-in-out infinite;
 }
+
+.hero-offscreen .animate-hero-pulse-glow {
+  animation-play-state: paused;
+}
