@@ -36,6 +36,6 @@ Optional: set `NEXT_PUBLIC_YOUORME_PREVIEW_URL` on hometolive.net Vercel if the 
 ## Design notes
 
 - Layout: header → hero → pillars → workflow → showcase → footer
-- Hero CTAs: **Start your project** (client portal) + **See how it works**
+- Hero CTAs: **Start your project** (contact form) + **Explore our services**
 - Hybrid messaging: public brand (PR/community) + automated client journey
 - Reference mockup: `7fe60d11-4313-4286-8782-c76a1634248a.jpeg`

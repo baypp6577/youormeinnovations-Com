@@ -21,16 +21,6 @@ import { contact, contactSection } from '@/data/site'
               {{ contact.website.replace(/^https?:\/\//, '') }}
             </a>
           </p>
-          <p>
-            <a
-              :href="contact.portal"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-semibold text-yom-blue hover:text-yom-navy"
-            >
-              Start your project in the client portal
-            </a>
-          </p>
         </div>
       </div>
 

@@ -47,6 +47,8 @@ onUnmounted(() => {
             :href="workflow.cta.href"
             :target="workflow.cta.external ? '_blank' : undefined"
             :rel="workflow.cta.external ? 'noopener noreferrer' : undefined"
+            :data-contact-subject="workflow.cta.contactSubject"
+            :data-contact-source="workflow.cta.contactSource"
             class="mt-8 inline-flex rounded-full border border-yom-gold/40 px-5 py-2.5 text-sm font-semibold text-yom-gold-soft transition hover:bg-yom-gold/10"
           >
             {{ workflow.cta.label }}

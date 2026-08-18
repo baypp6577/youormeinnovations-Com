@@ -71,6 +71,8 @@ onUnmounted(() => {
           :href="hero.primaryCta.href"
           :target="hero.primaryCta.external ? '_blank' : undefined"
           :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
+          :data-contact-subject="hero.primaryCta.contactSubject"
+          :data-contact-source="hero.primaryCta.contactSource"
           class="hidden rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-4 py-2 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/25 transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold sm:inline-flex"
         >
           {{ hero.primaryCta.label }}
@@ -116,6 +118,8 @@ onUnmounted(() => {
           :href="hero.primaryCta.href"
           :target="hero.primaryCta.external ? '_blank' : undefined"
           :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
+          :data-contact-subject="hero.primaryCta.contactSubject"
+          :data-contact-source="hero.primaryCta.contactSource"
           class="mt-2 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-4 py-3 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/25 transition hover:brightness-105 sm:hidden"
           @click="closeMenu"
         >

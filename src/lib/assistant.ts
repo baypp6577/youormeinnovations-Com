@@ -242,8 +242,8 @@ export function answerQuestion(userInput: string): AssistantReply {
 
   if (/\b(portal|login|dashboard|track progress|approve design)\b/.test(q)) {
     return {
-      text: workflow.description,
-      navigation: { url: workflow.cta.href, label: workflow.cta.label.replace(' →', '') },
+      text: 'New projects start with the contact form on this site. If you already have a live project with us, we send a private login when that work begins. There is no public portal signup here.',
+      navigation: { url: '#contact-section', label: 'Open contact form' },
     }
   }
 

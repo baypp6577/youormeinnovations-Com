@@ -8,6 +8,8 @@ export type SiteLink = {
   label: string
   href: string
   external?: boolean
+  contactSubject?: string
+  contactSource?: string
 }
 
 export type ServiceItem = {
@@ -64,13 +66,13 @@ export type SiteContent = {
   navLinks: Array<{ label: string; href: string }>
   footerLinks: {
     company: Array<{ label: string; href: string }>
-    resources: Array<{ label: string; href: string }>
+    resources: Array<{ label: string; href: string; contactSubject?: string; contactSource?: string }>
     legal: Array<{ label: string; href: string }>
   }
   contact: {
     website?: string
     socialNote?: string
-    portal: string
+    portal?: string
   }
   hero: {
     eyebrow: string

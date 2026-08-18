@@ -32,10 +32,12 @@ import BrandLogo from '@/components/BrandLogo.vue'
       <div>
         <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-yom-gold">Connect</h2>
         <ul class="space-y-2 text-sm">
-          <li v-for="link in footerLinks.resources" :key="link.href">
+          <li v-for="link in footerLinks.resources" :key="link.label">
             <a
               :href="link.href"
               class="text-slate-300 transition hover:text-white"
+              :data-contact-subject="link.contactSubject"
+              :data-contact-source="link.contactSource"
               :target="link.href.startsWith('http') ? '_blank' : undefined"
               :rel="link.href.startsWith('http') ? 'noopener noreferrer' : undefined"
             >

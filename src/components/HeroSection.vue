@@ -80,6 +80,8 @@ onUnmounted(() => observer?.disconnect())
           :href="hero.primaryCta.href"
           :target="hero.primaryCta.external ? '_blank' : undefined"
           :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
+          :data-contact-subject="hero.primaryCta.contactSubject"
+          :data-contact-source="hero.primaryCta.contactSource"
           class="inline-flex min-w-[200px] items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-7 py-3.5 text-sm font-bold text-yom-navy shadow-lg shadow-yom-gold/30 transition hover:scale-[1.02] hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
         >
           {{ hero.primaryCta.label }}

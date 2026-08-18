@@ -26,8 +26,7 @@
       { "label": "PR & Communications", "href": "#services-detail" },
       { "label": "Content & SEO", "href": "#services-detail" },
       { "label": "Community Engagement", "href": "#services-detail" },
-      { "label": "Start Your Project", "href": "https://hometolive.net/client/login?clientId=youorme" },
-      { "label": "Client Portal", "href": "https://hometolive.net/client/login?clientId=youorme" }
+      { "label": "Start Your Project", "href": "#contact-section", "contactSubject": "Start Your Project — Footer", "contactSource": "Footer resources" }
     ],
     "legal": [
       { "label": "Privacy Policy", "href": "#" },
@@ -37,15 +36,14 @@
   },
   "contact": {
     "website": "https://youormeinnovations.com",
-    "socialNote": "Social links will be added once approved on the client portal.",
-    "portal": "https://hometolive.net/client/login?clientId=youorme"
+    "socialNote": "Social links will be added once approved."
   },
   "hero": {
     "eyebrow": "AI-powered digital marketing · PR · brand growth",
     "headline": "Connecting global brands",
     "headlineAccent": "with local audiences",
     "description": "You Or Me Innovations helps businesses, startups and organisations get noticed, build stronger brands and connect with the audiences that matter. We combine AI-powered digital marketing, PR, content, branding and community engagement to turn ideas into measurable impact.",
-    "primaryCta": { "label": "Start Your Project", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "primaryCta": { "label": "Start Your Project", "href": "#contact-section", "external": false, "contactSubject": "Start Your Project — Homepage hero", "contactSource": "Homepage hero" },
     "secondaryCta": { "label": "Explore Our Services", "href": "#services-detail", "external": false },
     "tertiaryCta": { "label": "Contact Us", "href": "#contact-section", "external": false }
   },
@@ -187,8 +185,8 @@
   "workflow": {
     "eyebrow": "Our process",
     "title": "From idea to impact",
-    "description": "Your project. Your portal. Your progress. Clients can access a dedicated project environment to track progress, review work, approve designs and stay connected from the initial brief through delivery.",
-    "cta": { "label": "Access Client Portal", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "description": "From the first brief through delivery, we keep the process clear so you can review work, agree next steps and stay connected.",
+    "cta": { "label": "Start Your Project", "href": "#contact-section", "external": false, "contactSubject": "Start Your Project — Process", "contactSource": "Workflow section" },
     "steps": [
       { "id": "discover", "label": "Discover", "description": "We listen, understand your goals and identify the opportunity." },
       { "id": "strategise", "label": "Strategise", "description": "We turn your objectives into a practical marketing, PR or communications plan." },
@@ -269,7 +267,7 @@
     "eyebrow": "Ready to grow your brand?",
     "title": "Let’s turn your ideas into impact.",
     "description": "Whether you need PR, digital marketing, content, branding, community engagement or a complete marketing strategy, we’re ready to help.",
-    "primaryCta": { "label": "Start Your Project", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "primaryCta": { "label": "Start Your Project", "href": "#contact-section", "external": false, "contactSubject": "Start Your Project — Ready to grow", "contactSource": "Final CTA" },
     "secondaryCta": { "label": "Contact Us", "href": "#contact-section", "external": false }
   },
   "contactSection": {
