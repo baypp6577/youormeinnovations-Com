@@ -1,19 +1,14 @@
 <script setup lang="ts">
 import { brand, contact, footerLinks } from '@/data/site'
+import BrandLogo from '@/components/BrandLogo.vue'
 </script>
 
 <template>
   <footer id="contact" class="bg-yom-navy text-slate-200">
-    <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8">
+    <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-5 lg:px-8">
       <div class="lg:col-span-2">
-        <div class="mb-4 flex items-center gap-3">
-          <span
-            class="flex h-12 w-12 items-center justify-center rounded-full border border-yom-gold/30 bg-yom-navy-light text-sm font-bold text-white"
-            aria-hidden="true"
-          >
-            {{ brand.shortName }}
-          </span>
-          <p class="font-display text-lg font-semibold text-white">{{ brand.name }}</p>
+        <div class="mb-4">
+          <BrandLogo />
         </div>
         <p class="max-w-md text-sm leading-relaxed text-slate-300">
           {{ brand.tagline }}
@@ -61,6 +56,18 @@ import { brand, contact, footerLinks } from '@/data/site'
             >
               {{ contact.website.replace(/^https?:\/\//, '') }}
             </a>
+          </li>
+          <li v-if="contact.socialNote" class="text-slate-400">
+            {{ contact.socialNote }}
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-yom-gold">Legal</h2>
+        <ul class="space-y-2 text-sm">
+          <li v-for="link in footerLinks.legal" :key="link.label">
+            <a :href="link.href" class="text-slate-300 transition hover:text-white">{{ link.label }}</a>
           </li>
         </ul>
       </div>

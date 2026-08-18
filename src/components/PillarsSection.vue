@@ -12,7 +12,7 @@ const pillarIcons = ['◆', '◎', '★']
         <h2 class="mt-3 font-display text-3xl font-bold text-yom-navy sm:text-4xl">{{ services.title }}</h2>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-3">
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
         <article
           v-for="(pillar, index) in services.pillars"
           :key="pillar.id"

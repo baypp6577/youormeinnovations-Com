@@ -6,29 +6,40 @@
   },
   "navLinks": [
     { "label": "Home", "href": "#home" },
+    { "label": "About", "href": "#about" },
     { "label": "Services", "href": "#services" },
     { "label": "Projects", "href": "#projects" },
-    { "label": "Team", "href": "#team" },
     { "label": "Blog", "href": "#blog" },
-    { "label": "Contact", "href": "#contact" }
+    { "label": "Contact", "href": "#contact-section" }
   ],
   "footerLinks": {
     "company": [
       { "label": "Home", "href": "#home" },
+      { "label": "About", "href": "#about" },
       { "label": "Services", "href": "#services" },
       { "label": "Projects", "href": "#projects" },
-      { "label": "Blog", "href": "#blog" }
+      { "label": "Blog", "href": "#blog" },
+      { "label": "Contact", "href": "#contact-section" }
     ],
     "resources": [
-      { "label": "Start your project", "href": "https://hometolive.net/client/login?clientId=youorme" },
-      { "label": "Client portal", "href": "https://hometolive.net/client/login?clientId=youorme" },
-      { "label": "Contact", "href": "#contact" }
+      { "label": "Digital Marketing", "href": "#services-detail" },
+      { "label": "PR & Communications", "href": "#services-detail" },
+      { "label": "Content & SEO", "href": "#services-detail" },
+      { "label": "Community Engagement", "href": "#services-detail" },
+      { "label": "Start Your Project", "href": "https://hometolive.net/client/login?clientId=youorme" },
+      { "label": "Client Portal", "href": "https://hometolive.net/client/login?clientId=youorme" }
+    ],
+    "legal": [
+      { "label": "Privacy Policy", "href": "#" },
+      { "label": "Terms & Conditions", "href": "#" },
+      { "label": "Cookie Policy", "href": "#" }
     ]
   },
   "contact": {
     "email": "yomiodeneye@hotmail.com",
     "phone": "+44 7989 124745",
     "website": "https://youormeinnovations.com",
+    "socialNote": "Social links will be added once approved on the client portal.",
     "portal": "https://hometolive.net/client/login?clientId=youorme"
   },
   "hero": {
@@ -36,8 +47,25 @@
     "headline": "Connecting global brands",
     "headlineAccent": "with local audiences",
     "description": "You Or Me Innovations helps businesses, startups and organisations get noticed, build stronger brands and connect with the audiences that matter. We combine AI-powered digital marketing, PR, content, branding and community engagement to turn ideas into measurable impact.",
-    "primaryCta": { "label": "Start your project", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
-    "secondaryCta": { "label": "Explore our services", "href": "#services", "external": false }
+    "primaryCta": { "label": "Start Your Project", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "secondaryCta": { "label": "Explore Our Services", "href": "#services-detail", "external": false },
+    "tertiaryCta": { "label": "Contact Us", "href": "#contact-section", "external": false }
+  },
+  "trustStrip": {
+    "headline": "Built for brands that want to be seen, heard and remembered.",
+    "description": "From emerging businesses and entrepreneurs to global brands and community organisations, we help our clients communicate with confidence and connect with the right people."
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "More Than Marketing. We Build Connections.",
+    "intro": "From emerging businesses and entrepreneurs to global brands and community organisations, we help our clients communicate with confidence and connect with the right people.",
+    "description": [
+      "You Or Me Innovations (YOM) is a digital marketing, PR and brand-growth company built around one simple idea: successful brands connect with people.",
+      "We bring together strategy, creativity, technology and community insight to help businesses tell their stories, strengthen their visibility and reach new audiences.",
+      "Our particular strength is connecting brands with African, Caribbean, diaspora and local communities while helping ambitious businesses build a presence that can grow beyond their immediate market.",
+      "We do not just create campaigns. We help create connections that lead to opportunity, growth and impact."
+    ],
+    "cta": { "label": "Work With Us", "href": "#contact-section", "external": false }
   },
   "services": {
     "eyebrow": "Why YOM?",
@@ -56,24 +84,119 @@
         "description": "Technology is powerful, but people build relationships. Our approach combines automation with genuine human understanding."
       },
       {
-        "id": "excellence",
+        "id": "culture",
         "label": "Value pillar",
         "title": "Cultural intelligence",
         "description": "We understand the importance of relevance, culture and community when brands communicate across markets."
+      },
+      {
+        "id": "strategy",
+        "label": "Value pillar",
+        "title": "Practical strategy",
+        "description": "We focus on ideas that can actually be implemented, not strategy that simply looks good in a presentation."
+      },
+      {
+        "id": "delivery",
+        "label": "Value pillar",
+        "title": "Guided delivery",
+        "description": "From the first brief to final delivery, we give clients a clear process and visibility over their project."
       }
+    ]
+  },
+  "servicesDetail": {
+    "eyebrow": "What We Do",
+    "title": "Marketing that connects strategy with action.",
+    "description": "Whether you are launching a business, building an established brand or looking for a new audience, we provide practical marketing and communications support designed around your goals.",
+    "items": [
+      {
+        "id": "service-1",
+        "title": "AI-Powered Digital Marketing",
+        "tagline": "Smarter marketing. Better decisions.",
+        "description": "We use AI, automation, data and digital tools to help businesses create smarter campaigns, improve efficiency and reach the right audiences.",
+        "bullets": ["Digital marketing strategy", "AI-assisted marketing", "Campaign planning", "Audience research", "Marketing automation", "Lead generation", "Performance reporting"],
+        "cta": "Explore Digital Marketing"
+      },
+      {
+        "id": "service-2",
+        "title": "Public Relations & Communications",
+        "tagline": "Get your story in front of the right people.",
+        "description": "We help businesses and organisations build credibility, increase visibility and communicate with confidence.",
+        "bullets": ["PR strategy", "Press releases", "Media outreach", "Brand storytelling", "Thought leadership", "Reputation management", "Event and campaign publicity"],
+        "cta": "Get PR Support"
+      },
+      {
+        "id": "service-3",
+        "title": "Content & SEO",
+        "tagline": "Be discoverable. Be relevant. Be remembered.",
+        "description": "We create useful, engaging content that helps brands communicate with their audiences and improve their visibility across search engines and digital channels.",
+        "bullets": ["Website content", "Blog articles", "SEO content", "Keyword strategy", "Social media content", "Brand storytelling", "Content strategy"],
+        "cta": "Improve Your Visibility"
+      },
+      {
+        "id": "service-4",
+        "title": "Social Media Marketing",
+        "tagline": "Turn attention into engagement.",
+        "description": "We help businesses develop a consistent social presence that builds awareness, trust and relationships with customers.",
+        "bullets": ["Social media strategy", "Content planning", "Campaign development", "Community engagement", "Social media copy", "Performance monitoring"],
+        "cta": "Grow Your Social Presence"
+      },
+      {
+        "id": "service-5",
+        "title": "Branding & Creative",
+        "tagline": "Make your brand impossible to ignore.",
+        "description": "From your visual identity to your messaging, we help create brands that look professional, communicate clearly and stand apart from the competition.",
+        "bullets": ["Brand strategy", "Brand positioning", "Visual identity", "Marketing materials", "Website content", "Campaign creative", "Brand messaging"],
+        "cta": "Build Your Brand"
+      },
+      {
+        "id": "service-6",
+        "title": "Community & Diaspora Engagement",
+        "tagline": "Connect with communities that matter.",
+        "description": "We understand that successful communication is about more than demographics. It is about culture, relationships, trust and relevance.",
+        "bullets": ["Strategic partnerships", "Campaign planning", "Community events", "Grassroots communications"],
+        "cta": "Reach New Communities"
+      },
+      {
+        "id": "service-7",
+        "title": "African & Diaspora Market Opportunities",
+        "tagline": "Connect global ambition with local understanding.",
+        "description": "YOM helps brands explore opportunities to communicate authentically with African, Caribbean and diaspora audiences in the UK and beyond.",
+        "bullets": ["Market insight", "Cultural understanding", "PR", "Digital marketing", "Community partnerships", "Strategic communications"],
+        "cta": "Explore Market Opportunities"
+      },
+      {
+        "id": "service-8",
+        "title": "Afrocentric Food, Art & Fashion",
+        "tagline": "Bringing culture, creativity and commerce together.",
+        "description": "We support businesses and creators working across African and diaspora food, art, fashion and culture.",
+        "bullets": ["Brand promotion", "Cultural storytelling", "Audience growth", "Commercial visibility"],
+        "cta": "Promote Your Brand"
+      }
+    ]
+  },
+  "audiences": {
+    "eyebrow": "Who We Help",
+    "title": "Built for ambitious brands, founders and communities",
+    "items": [
+      { "id": "small-businesses", "title": "Small Businesses", "description": "Build visibility, attract customers and establish a professional brand presence." },
+      { "id": "startups", "title": "Startups", "description": "Launch with clarity, create awareness and build the foundations for sustainable growth." },
+      { "id": "entrepreneurs", "title": "Entrepreneurs", "description": "Turn your expertise, ideas and personal brand into a stronger market presence." },
+      { "id": "global-brands", "title": "Global Brands", "description": "Connect authentically with African, Caribbean and diaspora audiences." },
+      { "id": "community-organisations", "title": "Community Organisations", "description": "Increase awareness, engagement and participation through effective communications." },
+      { "id": "creators", "title": "Creators & Cultural Businesses", "description": "Promote food, fashion, art, music and cultural products to new audiences." }
     ]
   },
   "workflow": {
     "eyebrow": "Our process",
     "title": "From idea to impact",
     "description": "Your project. Your portal. Your progress. Clients can access a dedicated project environment to track progress, review work, approve designs and stay connected from the initial brief through delivery.",
-    "cta": { "label": "Access client portal →", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "cta": { "label": "Access Client Portal", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
     "steps": [
-      { "id": "discover", "label": "Discover", "description": "Listen, understand goals and identify the opportunity" },
-      { "id": "strategise", "label": "Strategise", "description": "Turn objectives into a practical marketing or PR plan" },
-      { "id": "create", "label": "Create", "description": "Develop content, campaigns and creative assets" },
-      { "id": "launch", "label": "Launch", "description": "Put the plan into action and reach the right audience" },
-      { "id": "measure", "label": "Measure & improve", "description": "Review performance and identify the next opportunity" }
+      { "id": "discover", "label": "Discover", "description": "We listen, understand your goals and identify the opportunity." },
+      { "id": "strategise", "label": "Strategise", "description": "We turn your objectives into a practical marketing, PR or communications plan." },
+      { "id": "create", "label": "Create", "description": "We develop the content, campaigns, creative assets and digital experiences needed to bring the strategy to life." },
+      { "id": "launch", "label": "Launch", "description": "We put the plan into action and help you reach the right audience." },
+      { "id": "measure", "label": "Measure & improve", "description": "We review performance, learn what works and identify the next opportunity." }
     ]
   },
   "projects": {
@@ -81,29 +204,50 @@
     "title": "Work that makes a difference",
     "description": "Real projects. Real people. Real impact. Explore selected campaigns, communications projects, digital experiences and community initiatives delivered through You Or Me Innovations.",
     "items": [
+      { "id": "pr", "title": "PR & Communications", "subtitle": "Brand stories that build credibility", "type": "globe" },
+      { "id": "digital", "title": "Digital Marketing", "subtitle": "Campaigns that reach the right audience", "type": "dashboard" },
+      { "id": "branding", "title": "Branding & Creative", "subtitle": "Identity and messaging that stand apart", "type": "workflow" },
+      { "id": "community", "title": "Community Campaigns", "subtitle": "Grassroots engagement and activation", "type": "growth" },
+      { "id": "web", "title": "Web & Digital Projects", "subtitle": "Digital experiences that support growth", "type": "dashboard" },
+      { "id": "diaspora", "title": "African & Diaspora Market Campaigns", "subtitle": "Global ambition with local understanding", "type": "globe" }
+    ]
+  },
+  "results": {
+    "eyebrow": "Results & Impact",
+    "title": "See the difference strategy can make",
+    "description": "Where appropriate, we will showcase measurable results from our work and focus on the outcomes that matter most to you.",
+    "metrics": [
+      { "id": "visibility", "label": "Increased visibility" },
+      { "id": "website-growth", "label": "Website growth" },
+      { "id": "engagement", "label": "Audience engagement" },
+      { "id": "media-coverage", "label": "Media coverage" },
+      { "id": "lead-generation", "label": "Lead generation" },
+      { "id": "campaign-reach", "label": "Campaign reach" },
+      { "id": "community-participation", "label": "Community participation" },
+      { "id": "brand-growth", "label": "Brand growth" }
+    ]
+  },
+  "packages": {
+    "eyebrow": "PR Packages",
+    "title": "PR that fits your stage of growth",
+    "items": [
       {
-        "id": "globe",
-        "title": "PR & communications",
-        "subtitle": "Brand stories that build credibility",
-        "type": "globe"
+        "id": "kickstart-pr",
+        "name": "Kickstart PR",
+        "price": "£99",
+        "tagline": "Start getting noticed.",
+        "description": "A practical PR starter package for businesses that need professional visibility and a stronger story.",
+        "idealFor": "Small businesses, entrepreneurs and new brands.",
+        "cta": "Get Started"
       },
       {
-        "id": "dashboard",
-        "title": "Digital marketing",
-        "subtitle": "Campaigns that reach the right audience",
-        "type": "dashboard"
-      },
-      {
-        "id": "workflow",
-        "title": "Branding & creative",
-        "subtitle": "Identity and messaging that stand apart",
-        "type": "workflow"
-      },
-      {
-        "id": "community",
-        "title": "Community campaigns",
-        "subtitle": "Grassroots engagement and activation",
-        "type": "growth"
+        "id": "momentum-pr",
+        "name": "Momentum PR",
+        "price": "£249 / month",
+        "tagline": "Build visibility consistently.",
+        "description": "Ongoing PR and communications support for businesses ready to build credibility, maintain visibility and keep their story moving.",
+        "idealFor": "Growing businesses, established entrepreneurs and organisations seeking ongoing communications support.",
+        "cta": "Build Momentum"
       }
     ]
   },
@@ -118,9 +262,37 @@
   "blog": {
     "eyebrow": "Blog",
     "title": "Ideas, insights & opportunities",
-    "description": "Stay informed. Stay inspired. Stay ahead. Explore insights on digital marketing, PR, AI, entrepreneurship, African and diaspora markets, and business growth.",
+    "description": "Stay informed. Stay inspired. Stay ahead. Explore our latest insights on digital marketing, PR and communications, AI and business, entrepreneurship, African and diaspora markets, community development, food, art and fashion, and branding and business growth.",
     "status": "coming_soon",
     "placeholderMessage": "Articles are in progress — the first posts will land here once editorial copy is ready.",
     "posts": []
+  },
+  "finalCta": {
+    "eyebrow": "Ready to grow your brand?",
+    "title": "Let’s turn your ideas into impact.",
+    "description": "Whether you need PR, digital marketing, content, branding, community engagement or a complete marketing strategy, we’re ready to help.",
+    "primaryCta": { "label": "Start Your Project", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true },
+    "secondaryCta": { "label": "Contact Us", "href": "#contact-section", "external": false }
+  },
+  "contactSection": {
+    "eyebrow": "Let’s Talk",
+    "title": "Have an idea, project or opportunity?",
+    "description": "Tell us a little about what you are trying to achieve and we’ll help you identify the best way forward.",
+    "services": [
+      "Digital Marketing",
+      "PR & Communications",
+      "Content & SEO",
+      "Social Media",
+      "Branding",
+      "Community Engagement",
+      "African/Diaspora Market Access",
+      "Website / Digital Project",
+      "Other"
+    ],
+    "submitLabel": "Send My Enquiry"
+  },
+  "seo": {
+    "title": "You Or Me Innovations | AI Digital Marketing, PR & Brand Growth",
+    "description": "You Or Me Innovations helps businesses and global brands grow through AI-powered digital marketing, PR, content, branding and community engagement. Connect with the audiences that matter."
   }
 }

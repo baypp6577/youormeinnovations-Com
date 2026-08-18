@@ -17,6 +17,10 @@ html {
   scroll-behavior: smooth;
 }
 
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
