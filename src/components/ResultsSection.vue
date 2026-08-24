@@ -20,6 +20,10 @@ import { results } from '@/data/site'
           <p class="font-display text-lg font-semibold">{{ metric.label }}</p>
         </div>
       </div>
+
+      <p v-if="results.closing" class="mx-auto mt-10 max-w-3xl text-center text-sm leading-relaxed text-slate-300">
+        {{ results.closing }}
+      </p>
     </div>
   </section>
 </template>

@@ -72,6 +72,7 @@ onUnmounted(() => {
               <div>
                 <p class="font-display font-semibold">{{ step.label }}</p>
                 <p class="text-sm text-slate-300">{{ step.description }}</p>
+                <p v-if="step.detail" class="mt-1 text-xs text-yom-gold-soft">{{ step.detail }}</p>
               </div>
             </li>
           </ol>

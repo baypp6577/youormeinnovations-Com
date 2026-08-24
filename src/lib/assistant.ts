@@ -6,6 +6,7 @@ import {
   contactSection,
   hero,
   packages,
+  portal,
   services,
   servicesDetail,
   workflow,
@@ -134,7 +135,16 @@ export function buildKnowledge(): KnowledgeChunk[] {
     href: '#workflow',
     navLabel: 'See our process',
     keywords: ['process', 'workflow', 'steps', 'discover', 'strategise', 'create', 'launch', 'measure', 'portal'],
-    text: [workflow.description, ...workflow.steps.map((step) => `${step.label}: ${step.description}`)].join('\n'),
+    text: [workflow.description, ...workflow.steps.map((step) => `${step.label}: ${step.description}${step.detail ? ` ${step.detail}` : ''}`)].join('\n'),
+  })
+
+  chunks.push({
+    id: 'portal',
+    title: portal.title,
+    href: '#portal',
+    navLabel: 'Client portal',
+    keywords: ['portal', 'login', 'dashboard', 'track', 'progress', 'approve', 'designs', 'updates'],
+    text: `${portal.description}\n${portal.points.join('. ')}.`,
   })
 
   chunks.push({
@@ -242,8 +252,8 @@ export function answerQuestion(userInput: string): AssistantReply {
 
   if (/\b(portal|login|dashboard|track progress|approve design)\b/.test(q)) {
     return {
-      text: 'New projects start with the contact form on this site. If you already have a live project with us, we send a private login when that work begins. There is no public portal signup here.',
-      navigation: { url: '#contact-section', label: 'Open contact form' },
+      text: `${portal.title}\n\n${portal.description}\n\n${portal.points.join(' · ')}\n\nExisting clients can sign in to their project portal. New projects start with the contact form on this site.`,
+      navigation: { url: '#portal', label: 'See the client portal' },
     }
   }
 

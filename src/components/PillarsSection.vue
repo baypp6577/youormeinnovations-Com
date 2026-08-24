@@ -10,6 +10,9 @@ const pillarIcons = ['◆', '◎', '★']
       <div class="mx-auto mb-14 max-w-2xl text-center">
         <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-blue">{{ services.eyebrow }}</p>
         <h2 class="mt-3 font-display text-3xl font-bold text-yom-navy sm:text-4xl">{{ services.title }}</h2>
+        <p v-if="services.description" class="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
+          {{ services.description }}
+        </p>
       </div>
 
       <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-5">

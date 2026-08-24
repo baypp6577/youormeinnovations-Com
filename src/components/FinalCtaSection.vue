@@ -8,6 +8,7 @@ import { finalCta } from '@/data/site'
       <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-gold-soft">{{ finalCta.eyebrow }}</p>
       <h2 class="mt-3 font-display text-3xl font-bold sm:text-4xl">{{ finalCta.title }}</h2>
       <p class="mt-4 text-sm leading-relaxed text-slate-100 sm:text-base">{{ finalCta.description }}</p>
+      <p v-if="finalCta.note" class="mt-3 text-sm leading-relaxed text-slate-100/90 sm:text-base">{{ finalCta.note }}</p>
 
       <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
         <a

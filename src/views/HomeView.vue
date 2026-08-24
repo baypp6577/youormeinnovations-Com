@@ -6,6 +6,7 @@ import FinalCtaSection from '@/components/FinalCtaSection.vue'
 import HeroSection from '@/components/HeroSection.vue'
 import PackagesSection from '@/components/PackagesSection.vue'
 import PillarsSection from '@/components/PillarsSection.vue'
+import PortalSection from '@/components/PortalSection.vue'
 import ResultsSection from '@/components/ResultsSection.vue'
 import ShowcaseSection from '@/components/ShowcaseSection.vue'
 import ServicesDetailSection from '@/components/ServicesDetailSection.vue'
@@ -19,10 +20,11 @@ import BlogSection from '@/components/BlogSection.vue'
     <HeroSection />
     <TrustStrip />
     <AboutSection />
-    <PillarsSection />
     <ServicesDetailSection />
+    <PillarsSection />
     <AudienceSection />
     <WorkflowSection />
+    <PortalSection />
     <ShowcaseSection />
     <ResultsSection />
     <PackagesSection />

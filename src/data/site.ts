@@ -66,11 +66,14 @@ export type SiteContent = {
   navLinks: Array<{ label: string; href: string }>
   footerLinks: {
     company: Array<{ label: string; href: string }>
-    resources: Array<{ label: string; href: string; contactSubject?: string; contactSource?: string }>
+    services: Array<{ label: string; href: string }>
+    client: Array<{ label: string; href: string; contactSubject?: string; contactSource?: string; external?: boolean }>
     legal: Array<{ label: string; href: string }>
   }
   contact: {
     website?: string
+    email?: string
+    servicesLine?: string
     socialNote?: string
     portal?: string
   }
@@ -79,6 +82,7 @@ export type SiteContent = {
     headline: string
     headlineAccent: string
     description: string
+    supportingStatement?: string
     primaryCta: SiteLink
     secondaryCta: SiteLink
     tertiaryCta?: SiteLink
@@ -86,6 +90,7 @@ export type SiteContent = {
   trustStrip: {
     headline: string
     description: string
+    promise?: string
   }
   about: {
     eyebrow: string
@@ -97,6 +102,7 @@ export type SiteContent = {
   services: {
     eyebrow: string
     title: string
+    description?: string
     pillars: Array<{
       id: string
       label: string
@@ -120,12 +126,20 @@ export type SiteContent = {
     title: string
     description: string
     cta: SiteLink
-    steps: Array<{ id: string; label: string; description: string }>
+    steps: Array<{ id: string; label: string; description: string; detail?: string }>
+  }
+  portal: {
+    eyebrow: string
+    title: string
+    description: string
+    points: string[]
+    cta: SiteLink
   }
   projects: {
     eyebrow: string
     title: string
     description: string
+    note?: string
     items: Array<{
       id: string
       title: string
@@ -137,6 +151,7 @@ export type SiteContent = {
     eyebrow: string
     title: string
     description: string
+    closing?: string
     metrics: ResultMetric[]
   }
   packages: {
@@ -164,6 +179,7 @@ export type SiteContent = {
     eyebrow: string
     title: string
     description: string
+    note?: string
     primaryCta: SiteLink
     secondaryCta: SiteLink
   }
@@ -193,6 +209,7 @@ export const services = content.services
 export const servicesDetail = content.servicesDetail
 export const audiences = content.audiences
 export const workflow = content.workflow
+export const portal = content.portal
 export const projects = content.projects
 export const results = content.results
 export const packages = content.packages

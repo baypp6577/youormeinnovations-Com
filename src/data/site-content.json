@@ -7,7 +7,7 @@
   "navLinks": [
     { "label": "Home", "href": "#home" },
     { "label": "About", "href": "#about" },
-    { "label": "Services", "href": "#services" },
+    { "label": "Services", "href": "#services-detail" },
     { "label": "Projects", "href": "#projects" },
     { "label": "Blog", "href": "#blog" },
     { "label": "Contact", "href": "#contact-section" }
@@ -16,17 +16,22 @@
     "company": [
       { "label": "Home", "href": "#home" },
       { "label": "About", "href": "#about" },
-      { "label": "Services", "href": "#services" },
+      { "label": "Services", "href": "#services-detail" },
       { "label": "Projects", "href": "#projects" },
       { "label": "Blog", "href": "#blog" },
       { "label": "Contact", "href": "#contact-section" }
     ],
-    "resources": [
-      { "label": "Digital Marketing", "href": "#services-detail" },
-      { "label": "PR & Communications", "href": "#services-detail" },
-      { "label": "Content & SEO", "href": "#services-detail" },
-      { "label": "Community Engagement", "href": "#services-detail" },
-      { "label": "Start Your Project", "href": "#contact-section", "contactSubject": "Start Your Project — Footer", "contactSource": "Footer resources" }
+    "services": [
+      { "label": "Digital Marketing", "href": "#service-1" },
+      { "label": "PR & Communications", "href": "#service-2" },
+      { "label": "Content & SEO", "href": "#service-3" },
+      { "label": "Social Media", "href": "#service-4" },
+      { "label": "Branding", "href": "#service-5" },
+      { "label": "Community Engagement", "href": "#service-6" }
+    ],
+    "client": [
+      { "label": "Start Your Project", "href": "#contact-section", "contactSubject": "Start Your Project — Footer", "contactSource": "Footer client links" },
+      { "label": "Client Portal", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true }
     ],
     "legal": [
       { "label": "Privacy Policy", "href": "#" },
@@ -36,20 +41,23 @@
   },
   "contact": {
     "website": "https://youormeinnovations.com",
-    "socialNote": "Social links will be added once approved."
+    "servicesLine": "PR · Digital Marketing · Branding · Content · Community · Guided Digital Delivery",
+    "socialNote": "Social links will be added once approved.",
+    "portal": "https://hometolive.net/client/login?clientId=youorme"
   },
   "hero": {
     "eyebrow": "AI-powered digital marketing · PR · brand growth",
     "headline": "Connecting global brands",
     "headlineAccent": "with local audiences",
     "description": "You Or Me Innovations helps businesses, startups and organisations get noticed, build stronger brands and connect with the audiences that matter. We combine AI-powered digital marketing, PR, content, branding and community engagement to turn ideas into measurable impact.",
+    "supportingStatement": "Strategy. Creativity. Technology. Human connection.",
     "primaryCta": { "label": "Start Your Project", "href": "#contact-section", "external": false, "contactSubject": "Start Your Project — Homepage hero", "contactSource": "Homepage hero" },
-    "secondaryCta": { "label": "Explore Our Services", "href": "#services-detail", "external": false },
-    "tertiaryCta": { "label": "Contact Us", "href": "#contact-section", "external": false }
+    "secondaryCta": { "label": "Explore Our Services", "href": "#services-detail", "external": false }
   },
   "trustStrip": {
     "headline": "Built for brands that want to be seen, heard and remembered.",
-    "description": "From emerging businesses and entrepreneurs to global brands and community organisations, we help our clients communicate with confidence and connect with the right people."
+    "description": "From emerging businesses and entrepreneurs to global brands and community organisations, we help our clients communicate with confidence and connect with the right people.",
+    "promise": "We help ambitious brands get noticed, build meaningful connections and turn attention into opportunity."
   },
   "about": {
     "eyebrow": "About",
@@ -64,8 +72,9 @@
     "cta": { "label": "Work With Us", "href": "#contact-section", "external": false }
   },
   "services": {
-    "eyebrow": "Why YOM?",
+    "eyebrow": "Why You Or Me Innovations?",
     "title": "We connect the pieces",
+    "description": "Marketing can become complicated. We make it easier to move from an idea to a clear strategy, from strategy to execution and from execution to measurable results.",
     "pillars": [
       {
         "id": "intelligence",
@@ -148,7 +157,7 @@
         "id": "service-6",
         "title": "Community & Diaspora Engagement",
         "tagline": "Connect with communities that matter.",
-        "description": "We understand that successful communication is about more than demographics. It is about culture, relationships, trust and relevance.",
+        "description": "We understand that successful communication is about more than demographics. It is about culture, relationships, trust and relevance. We help brands and organisations engage African, Caribbean, diaspora and grassroots communities through strategic partnerships, campaigns, events and communications.",
         "bullets": ["Strategic partnerships", "Campaign planning", "Community events", "Grassroots communications"],
         "cta": "Reach New Communities"
       },
@@ -156,7 +165,7 @@
         "id": "service-7",
         "title": "African & Diaspora Market Opportunities",
         "tagline": "Connect global ambition with local understanding.",
-        "description": "YOM helps brands explore opportunities to communicate authentically with African, Caribbean and diaspora audiences in the UK and beyond.",
+        "description": "Africa and its global diaspora represent powerful communities, cultures and markets. YOM helps brands explore opportunities to communicate authentically with African, Caribbean and diaspora audiences in the UK and beyond.",
         "bullets": ["Market insight", "Cultural understanding", "PR", "Digital marketing", "Community partnerships", "Strategic communications"],
         "cta": "Explore Market Opportunities"
       },
@@ -164,7 +173,7 @@
         "id": "service-8",
         "title": "Afrocentric Food, Art & Fashion",
         "tagline": "Bringing culture, creativity and commerce together.",
-        "description": "We support businesses and creators working across African and diaspora food, art, fashion and culture.",
+        "description": "We support businesses and creators working across African and diaspora food, art, fashion and culture. From emerging entrepreneurs to established brands, we help turn cultural creativity into stronger visibility and commercial opportunity.",
         "bullets": ["Brand promotion", "Cultural storytelling", "Audience growth", "Commercial visibility"],
         "cta": "Promote Your Brand"
       }
@@ -188,17 +197,35 @@
     "description": "From the first brief through delivery, we keep the process clear so you can review work, agree next steps and stay connected.",
     "cta": { "label": "Start Your Project", "href": "#contact-section", "external": false, "contactSubject": "Start Your Project — Process", "contactSource": "Workflow section" },
     "steps": [
-      { "id": "discover", "label": "Discover", "description": "We listen, understand your goals and identify the opportunity." },
-      { "id": "strategise", "label": "Strategise", "description": "We turn your objectives into a practical marketing, PR or communications plan." },
-      { "id": "create", "label": "Create", "description": "We develop the content, campaigns, creative assets and digital experiences needed to bring the strategy to life." },
-      { "id": "launch", "label": "Launch", "description": "We put the plan into action and help you reach the right audience." },
-      { "id": "measure", "label": "Measure & improve", "description": "We review performance, learn what works and identify the next opportunity." }
+      { "id": "discover", "label": "Discover", "description": "We listen, understand your goals and identify the opportunity.", "detail": "Strategy, requirements and audience discovery." },
+      { "id": "strategise", "label": "Strategise", "description": "We turn your objectives into a practical marketing, PR or communications plan.", "detail": "Clear priorities. Clear actions. Clear outcomes." },
+      { "id": "create", "label": "Create", "description": "We develop the content, campaigns, creative assets and digital experiences needed to bring the strategy to life.", "detail": "Creative work designed around your brand." },
+      { "id": "launch", "label": "Launch", "description": "We put the plan into action and help you reach the right audience.", "detail": "Campaign delivery, promotion and implementation." },
+      { "id": "measure", "label": "Measure & improve", "description": "We review performance, learn what works and identify the next opportunity.", "detail": "Because marketing should keep getting better." }
     ]
+  },
+  "portal": {
+    "eyebrow": "Client portal",
+    "title": "Your project. Your portal. Your progress.",
+    "description": "Everything in one place. Clients can access a dedicated project environment to stay informed throughout their journey. From the initial brief through delivery, our guided process gives you greater visibility and control.",
+    "points": [
+      "Track progress",
+      "Review work",
+      "Approve designs",
+      "Receive updates",
+      "Stay connected"
+    ],
+    "cta": {
+      "label": "Access Client Portal",
+      "href": "https://hometolive.net/client/login?clientId=youorme",
+      "external": true
+    }
   },
   "projects": {
     "eyebrow": "Projects & portfolio",
     "title": "Work that makes a difference",
     "description": "Real projects. Real people. Real impact. Explore selected campaigns, communications projects, digital experiences and community initiatives delivered through You Or Me Innovations.",
+    "note": "We are building a portfolio of work that demonstrates what happens when strategy, creativity, technology and community come together.",
     "items": [
       { "id": "pr", "title": "PR & Communications", "subtitle": "Brand stories that build credibility", "type": "globe" },
       { "id": "digital", "title": "Digital Marketing", "subtitle": "Campaigns that reach the right audience", "type": "dashboard" },
@@ -209,9 +236,10 @@
     ]
   },
   "results": {
-    "eyebrow": "Results & Impact",
+    "eyebrow": "Don't just take our word for it",
     "title": "See the difference strategy can make",
     "description": "Where appropriate, we will showcase measurable results from our work and focus on the outcomes that matter most to you.",
+    "closing": "Every project is different. Our goal is to identify the outcomes that matter most to you — and work towards them.",
     "metrics": [
       { "id": "visibility", "label": "Increased visibility" },
       { "id": "website-growth", "label": "Website growth" },
@@ -267,6 +295,7 @@
     "eyebrow": "Ready to grow your brand?",
     "title": "Let’s turn your ideas into impact.",
     "description": "Whether you need PR, digital marketing, content, branding, community engagement or a complete marketing strategy, we’re ready to help.",
+    "note": "Tell us where you are, where you want to go and what you need to get there.",
     "primaryCta": { "label": "Start Your Project", "href": "#contact-section", "external": false, "contactSubject": "Start Your Project — Ready to grow", "contactSource": "Final CTA" },
     "secondaryCta": { "label": "Contact Us", "href": "#contact-section", "external": false }
   },

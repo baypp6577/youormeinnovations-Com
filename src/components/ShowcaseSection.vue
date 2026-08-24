@@ -186,6 +186,7 @@ onUnmounted(() => {
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-blue">{{ projects.eyebrow }}</p>
           <h2 class="mt-3 font-display text-3xl font-bold text-yom-navy sm:text-4xl">{{ projects.title }}</h2>
+          <p v-if="projects.note" class="mt-3 max-w-2xl text-sm text-slate-600">{{ projects.note }}</p>
         </div>
         <p class="max-w-md text-sm text-slate-600">
           {{ projects.description }}

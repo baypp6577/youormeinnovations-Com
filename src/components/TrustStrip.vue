@@ -9,9 +9,14 @@ import { trustStrip } from '@/data/site'
         <h2 class="font-display text-2xl font-bold text-yom-navy sm:text-3xl">
           {{ trustStrip.headline }}
         </h2>
-        <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
-          {{ trustStrip.description }}
-        </p>
+        <div>
+          <p class="text-sm leading-relaxed text-slate-600 sm:text-base">
+            {{ trustStrip.description }}
+          </p>
+          <p v-if="trustStrip.promise" class="mt-3 text-sm font-medium text-yom-navy sm:text-base">
+            {{ trustStrip.promise }}
+          </p>
+        </div>
       </div>
     </div>
   </section>

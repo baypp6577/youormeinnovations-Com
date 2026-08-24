@@ -72,6 +72,14 @@ onUnmounted(() => observer?.disconnect())
         {{ hero.description }}
       </p>
 
+      <p
+        v-if="hero.supportingStatement"
+        class="animate-float-up mx-auto mt-4 text-sm font-semibold uppercase tracking-[0.18em] text-yom-gold-soft"
+        style="animation-delay: 0.24s"
+      >
+        {{ hero.supportingStatement }}
+      </p>
+
       <div
         class="animate-float-up mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap"
         style="animation-delay: 0.28s"
@@ -93,17 +101,6 @@ onUnmounted(() => observer?.disconnect())
           class="inline-flex min-w-[200px] items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           {{ hero.secondaryCta.label }}
-        </a>
-        <a
-          v-if="hero.tertiaryCta"
-          :href="hero.tertiaryCta.href"
-          :target="hero.tertiaryCta.external ? '_blank' : undefined"
-          :rel="hero.tertiaryCta.external ? 'noopener noreferrer' : undefined"
-          data-contact-subject="Contact Us — Homepage hero"
-          data-contact-source="Homepage hero"
-          class="inline-flex min-w-[200px] items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-        >
-          {{ hero.tertiaryCta.label }}
         </a>
       </div>
     </div>

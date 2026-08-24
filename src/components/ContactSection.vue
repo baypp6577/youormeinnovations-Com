@@ -10,6 +10,9 @@ import { contact, contactSection } from '@/data/site'
         <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-blue">{{ contactSection.eyebrow }}</p>
         <h2 class="mt-3 font-display text-3xl font-bold text-yom-navy sm:text-4xl">{{ contactSection.title }}</h2>
         <p class="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">{{ contactSection.description }}</p>
+        <p v-if="contact.servicesLine" class="mt-3 text-sm font-medium text-yom-navy">
+          {{ contact.servicesLine }}
+        </p>
         <p class="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
           Use the form to send a message. We will come back to you by email.
         </p>
