@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { brand, contact, footerLinks } from '@/data/site'
+import { RouterLink, useRoute } from 'vue-router'
+import { brand, contact, footerLinks, siteHref } from '@/data/site'
 import BrandLogo from '@/components/BrandLogo.vue'
+
+const route = useRoute()
+
+function isAppPath(href: string) {
+  return href.startsWith('/') && !href.includes('#')
+}
 </script>
 
 <template>
@@ -22,8 +29,14 @@ import BrandLogo from '@/components/BrandLogo.vue'
         <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-yom-gold">Company</h2>
         <ul class="space-y-2 text-sm">
           <li v-for="link in footerLinks.company" :key="link.href">
+            <RouterLink
+              v-if="isAppPath(link.href)"
+              :to="link.href"
+              class="text-slate-300 transition hover:text-white"
+            >{{ link.label }}</RouterLink>
             <a
-              :href="link.href"
+              v-else
+              :href="siteHref(link.href, route.path)"
               :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Footer' : undefined"
               :data-contact-source="link.href === '#contact-section' ? 'Footer company links' : undefined"
               class="text-slate-300 transition hover:text-white"
@@ -36,7 +49,7 @@ import BrandLogo from '@/components/BrandLogo.vue'
         <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-yom-gold">Services</h2>
         <ul class="space-y-2 text-sm">
           <li v-for="link in footerLinks.services" :key="link.label">
-            <a :href="link.href" class="text-slate-300 transition hover:text-white">{{ link.label }}</a>
+            <a :href="siteHref(link.href, route.path)" class="text-slate-300 transition hover:text-white">{{ link.label }}</a>
           </li>
         </ul>
       </div>

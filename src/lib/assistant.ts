@@ -1,6 +1,7 @@
 import {
   about,
   audiences,
+  blog,
   brand,
   contact,
   contactSection,
@@ -11,6 +12,7 @@ import {
   servicesDetail,
   workflow,
 } from '@/data/site'
+import { bundledBlogPosts, postPath, publishedPosts } from '@/lib/blog'
 
 export type KnowledgeChunk = {
   id: string
@@ -173,6 +175,26 @@ export function buildKnowledge(): KnowledgeChunk[] {
       .join('\n'),
   })
 
+  for (const post of publishedPosts(bundledBlogPosts())) {
+    chunks.push({
+      id: `blog-${post.slug}`,
+      title: post.title,
+      href: postPath(post.slug),
+      navLabel: 'Read article',
+      keywords: unique(['blog', 'article', 'insight', ...words(`${post.title} ${post.excerpt}`)]),
+      text: `${post.excerpt}\n\n${post.body}`,
+    })
+  }
+
+  chunks.push({
+    id: 'blog-index',
+    title: blog.title,
+    href: '/blog',
+    navLabel: 'Open the blog',
+    keywords: ['blog', 'article', 'articles', 'insights', 'news', 'post'],
+    text: `${blog.description}\n\nLatest articles are listed on the blog page.`,
+  })
+
   return chunks
 }
 
@@ -268,6 +290,17 @@ export function answerQuestion(userInput: string): AssistantReply {
     return {
       text: `${audiences.title}\n\n${audiences.items.map((item) => `• ${item.title} — ${item.description}`).join('\n')}`,
       navigation: { url: '#audiences', label: 'See who we help' },
+    }
+  }
+
+  if (/\b(blog|article|articles|insights?|posts?)\b/.test(q)) {
+    const latest = publishedPosts(bundledBlogPosts()).slice(0, 3)
+    const list = latest.length
+      ? latest.map((post) => `• ${post.title} — ${post.excerpt}`).join('\n')
+      : 'New articles will appear on the blog as they are published.'
+    return {
+      text: `${blog.title}\n\n${blog.description}\n\n${list}`,
+      navigation: { url: '/blog', label: 'Open the blog' },
     }
   }
 

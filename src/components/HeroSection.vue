@@ -59,7 +59,7 @@ onUnmounted(() => observer?.disconnect())
         class="animate-float-up font-display text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl"
         style="animation-delay: 0.12s"
       >
-        {{ hero.headline }}<br class="hidden sm:block" />
+        {{ hero.headline }}{{ ' ' }}<br class="hidden sm:block" />
         <span class="bg-gradient-to-r from-white via-slate-100 to-yom-gold-soft bg-clip-text text-transparent">
           {{ hero.headlineAccent }}
         </span>

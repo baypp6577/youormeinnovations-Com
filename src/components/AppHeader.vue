@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 import { hero, navLinks } from '@/data/site'
 import BrandLogo from '@/components/BrandLogo.vue'
 
+const route = useRoute()
 const menuOpen = ref(false)
 const menuButton = ref<HTMLButtonElement | null>(null)
+
+function isAppPath(href: string) {
+  return href.startsWith('/') && !href.includes('#')
+}
+
+function navHref(href: string) {
+  if (href.startsWith('#') && route.path !== '/') return `/${href}`
+  return href
+}
 
 function closeMenu() {
   menuOpen.value = false
@@ -48,27 +59,36 @@ onUnmounted(() => {
     class="sticky top-0 z-50 border-b border-white/10 bg-yom-navy/90 backdrop-blur-xl supports-[backdrop-filter]:bg-yom-navy/75"
   >
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
-      <a href="#home" class="group min-w-0 no-underline" aria-label="You Or Me Innovations" @click="closeMenu">
+      <RouterLink to="/" class="group min-w-0 no-underline" aria-label="You Or Me Innovations" @click="closeMenu">
         <BrandLogo compact />
-      </a>
+      </RouterLink>
 
       <nav class="hidden items-center gap-1 lg:flex" aria-label="Primary">
-        <a
-          v-for="link in navLinks"
-          :key="link.href"
-          :href="link.href"
-          :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
-          :data-contact-source="link.href === '#contact-section' ? 'Header navigation' : undefined"
-          class="rounded-full px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
-          :class="link.href === '#home' ? 'bg-white/10 text-white' : ''"
-        >
-          {{ link.label }}
-        </a>
+        <template v-for="link in navLinks" :key="link.href">
+          <RouterLink
+            v-if="isAppPath(link.href)"
+            :to="link.href"
+            class="rounded-full px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
+            :class="route.path === link.href || route.path.startsWith(`${link.href}/`) ? 'bg-white/10 text-white' : ''"
+          >
+            {{ link.label }}
+          </RouterLink>
+          <a
+            v-else
+            :href="navHref(link.href)"
+            :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
+            :data-contact-source="link.href === '#contact-section' ? 'Header navigation' : undefined"
+            class="rounded-full px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
+            :class="link.href === '#home' && route.path === '/' ? 'bg-white/10 text-white' : ''"
+          >
+            {{ link.label }}
+          </a>
+        </template>
       </nav>
 
       <div class="flex shrink-0 items-center gap-2">
         <a
-          :href="hero.primaryCta.href"
+          :href="navHref(hero.primaryCta.href)"
           :target="hero.primaryCta.external ? '_blank' : undefined"
           :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
           :data-contact-subject="hero.primaryCta.contactSubject"
@@ -103,19 +123,28 @@ onUnmounted(() => {
       id="mobile-nav"
     >
       <nav class="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6" aria-label="Mobile">
+        <template v-for="link in navLinks" :key="`m-${link.href}`">
+          <RouterLink
+            v-if="isAppPath(link.href)"
+            :to="link.href"
+            class="rounded-xl px-4 py-3 text-base font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
+            @click="closeMenu"
+          >
+            {{ link.label }}
+          </RouterLink>
+          <a
+            v-else
+            :href="navHref(link.href)"
+            :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
+            :data-contact-source="link.href === '#contact-section' ? 'Mobile navigation' : undefined"
+            class="rounded-xl px-4 py-3 text-base font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
+            @click="closeMenu"
+          >
+            {{ link.label }}
+          </a>
+        </template>
         <a
-          v-for="link in navLinks"
-          :key="link.href"
-          :href="link.href"
-          :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
-          :data-contact-source="link.href === '#contact-section' ? 'Mobile navigation' : undefined"
-          class="rounded-xl px-4 py-3 text-base font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
-          @click="closeMenu"
-        >
-          {{ link.label }}
-        </a>
-        <a
-          :href="hero.primaryCta.href"
+          :href="navHref(hero.primaryCta.href)"
           :target="hero.primaryCta.external ? '_blank' : undefined"
           :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
           :data-contact-subject="hero.primaryCta.contactSubject"

@@ -1,4 +1,5 @@
 import siteContent from './site-content.json'
+import { bundledBlogPosts, publishedPosts } from '@/lib/blog'
 
 export type SectionStatus = 'live' | 'coming_soon'
 
@@ -50,7 +51,8 @@ export type TeamMember = {
 }
 
 export type BlogPost = {
-  id: string
+  id?: string
+  slug?: string
   title: string
   excerpt: string
   date?: string
@@ -230,5 +232,13 @@ export function hasTeamContent(): boolean {
 }
 
 export function hasBlogContent(): boolean {
-  return blog.posts.length > 0
+  return publishedPosts(bundledBlogPosts()).length > 0
+}
+
+export function siteHref(href: string, currentPath = '/'): string {
+  if (!href) return href
+  if (href.startsWith('http') || href.startsWith('mailto:')) return href
+  if (href.startsWith('/') && !href.startsWith('/#')) return href
+  if (href.startsWith('#') && currentPath !== '/') return `/${href}`
+  return href
 }
