@@ -16,19 +16,21 @@ withDefaults(
       width="72"
       height="96"
       class="shrink-0 rounded-md object-contain"
-      :class="compact ? 'h-10 w-auto sm:h-11' : 'h-14 w-auto sm:h-16'"
+      :class="compact ? 'h-11 w-auto sm:h-12' : 'h-16 w-auto sm:h-20'"
     />
-    <span class="h-8 w-px shrink-0 bg-white/25 sm:h-10" aria-hidden="true" />
+    <span class="h-9 w-px shrink-0 bg-white/25 sm:h-11" aria-hidden="true" />
     <span class="inline-flex min-w-0 flex-col justify-center leading-none" aria-hidden="true">
       <span
-        class="font-display font-bold tracking-tight text-white"
-        :class="compact ? 'text-[0.95rem] sm:text-base' : 'text-lg sm:text-xl'"
+        class="inline-flex items-baseline font-display font-extrabold tracking-wide text-white"
+        :class="compact ? 'gap-x-1.5 text-lg sm:gap-x-2 sm:text-xl' : 'gap-x-2 text-xl sm:gap-x-2.5 sm:text-2xl'"
       >
-        You <span class="italic text-yom-gold">Or</span> Me
+        <span>You</span>
+        <span class="italic text-yom-gold">Or</span>
+        <span>Me</span>
       </span>
       <span
-        class="mt-0.5 font-semibold uppercase text-yom-gold-soft"
-        :class="compact ? 'text-[0.55rem] tracking-[0.28em]' : 'text-[0.62rem] tracking-[0.34em]'"
+        class="mt-1 font-semibold uppercase text-yom-gold-soft"
+        :class="compact ? 'text-[0.6rem] tracking-[0.32em]' : 'text-[0.7rem] tracking-[0.38em]'"
       >
         Innovations
       </span>
