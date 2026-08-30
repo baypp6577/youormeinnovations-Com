@@ -15,7 +15,7 @@ function isAppPath(href: string) {
     <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-5 lg:px-8">
       <div class="lg:col-span-1">
         <div class="mb-4">
-          <BrandLogo />
+          <BrandLogo grow-on-desktop />
         </div>
         <p class="max-w-md text-sm leading-relaxed text-slate-300">
           {{ brand.tagline }}

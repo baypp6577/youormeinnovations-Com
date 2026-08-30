@@ -58,9 +58,9 @@ onUnmounted(() => {
   <header
     class="sticky top-0 z-50 border-b border-white/10 bg-yom-navy/90 backdrop-blur-xl supports-[backdrop-filter]:bg-yom-navy/75"
   >
-    <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8 lg:py-5">
       <RouterLink to="/" class="group min-w-0 no-underline" aria-label="You Or Me Innovations" @click="closeMenu">
-        <BrandLogo compact />
+        <BrandLogo compact grow-on-desktop />
       </RouterLink>
 
       <nav class="hidden items-center gap-1 lg:flex" aria-label="Primary">
