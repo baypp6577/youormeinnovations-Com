@@ -59,8 +59,9 @@ onMounted(() => {
       <div class="mt-10 space-y-5 text-base leading-relaxed text-slate-700">
         <p v-for="(para, idx) in paragraphs" :key="idx" class="whitespace-pre-wrap">{{ para }}</p>
       </div>
-      <p class="mt-12">
+      <p class="mt-12 flex flex-wrap items-center gap-x-4 gap-y-2">
         <RouterLink to="/blog" class="text-sm font-semibold text-yom-blue hover:text-yom-navy">← All articles</RouterLink>
+        <a href="/#contact-section" class="text-sm font-semibold text-yom-navy hover:text-yom-blue">Start a project →</a>
       </p>
     </article>
 
