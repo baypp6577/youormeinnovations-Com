@@ -55,106 +55,113 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header
-    class="sticky top-0 z-50 border-b border-white/10 bg-yom-navy/90 backdrop-blur-xl supports-[backdrop-filter]:bg-yom-navy/75"
-  >
-    <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8 lg:py-5">
-      <RouterLink to="/" class="group min-w-0 no-underline" aria-label="You Or Me Innovations" @click="closeMenu">
-        <BrandLogo compact grow-on-desktop />
-      </RouterLink>
+  <!-- Same shell as hometolive.net: fixed full-width, h-16 row, logo + hamburger on phone -->
+  <header class="fixed top-0 left-0 z-50 w-full border-b border-white/10 bg-yom-navy shadow-lg">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <RouterLink to="/" class="flex items-center no-underline" aria-label="You Or Me Innovations" @click="closeMenu">
+          <BrandLogo compact />
+        </RouterLink>
 
-      <nav class="hidden items-center gap-1 lg:flex" aria-label="Primary">
-        <template v-for="link in navLinks" :key="link.href">
-          <RouterLink
-            v-if="isAppPath(link.href)"
-            :to="link.href"
-            class="rounded-full px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
-            :class="route.path === link.href || route.path.startsWith(`${link.href}/`) ? 'bg-white/10 text-white' : ''"
-          >
-            {{ link.label }}
-          </RouterLink>
+        <nav class="relative hidden items-center gap-1 lg:flex" aria-label="Primary">
+          <template v-for="link in navLinks" :key="link.href">
+            <RouterLink
+              v-if="isAppPath(link.href)"
+              :to="link.href"
+              class="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-slate-200 hover:text-yom-gold-soft"
+              :class="route.path === link.href || route.path.startsWith(`${link.href}/`) ? 'text-white' : ''"
+            >
+              {{ link.label }}
+            </RouterLink>
+            <a
+              v-else
+              :href="navHref(link.href)"
+              :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
+              :data-contact-source="link.href === '#contact-section' ? 'Header navigation' : undefined"
+              class="inline-flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium text-slate-200 hover:text-yom-gold-soft"
+              :class="link.href === '#home' && route.path === '/' ? 'text-white' : ''"
+            >
+              {{ link.label }}
+            </a>
+          </template>
           <a
-            v-else
-            :href="navHref(link.href)"
-            :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
-            :data-contact-source="link.href === '#contact-section' ? 'Header navigation' : undefined"
-            class="rounded-full px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
-            :class="link.href === '#home' && route.path === '/' ? 'bg-white/10 text-white' : ''"
+            :href="navHref(hero.primaryCta.href)"
+            :target="hero.primaryCta.external ? '_blank' : undefined"
+            :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
+            :data-contact-subject="hero.primaryCta.contactSubject"
+            :data-contact-source="hero.primaryCta.contactSource"
+            class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-4 py-1.5 text-sm font-bold text-yom-navy shadow-md shadow-yom-gold/25 transition hover:brightness-105"
           >
-            {{ link.label }}
+            {{ hero.primaryCta.label }}
           </a>
-        </template>
-      </nav>
+        </nav>
 
-      <div class="flex shrink-0 items-center gap-2">
-        <a
-          :href="navHref(hero.primaryCta.href)"
-          :target="hero.primaryCta.external ? '_blank' : undefined"
-          :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
-          :data-contact-subject="hero.primaryCta.contactSubject"
-          :data-contact-source="hero.primaryCta.contactSource"
-          class="hidden rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-4 py-2 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/25 transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold sm:inline-flex"
-        >
-          {{ hero.primaryCta.label }}
-        </a>
+        <div class="lg:hidden">
+          <button
+            ref="menuButton"
+            type="button"
+            class="text-white hover:text-yom-gold-soft"
+            :aria-expanded="menuOpen"
+            aria-controls="mobile-nav"
+            :aria-label="menuOpen ? 'Close menu' : 'Open menu'"
+            @click="toggleMenu"
+          >
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path
+                v-if="!menuOpen"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+              <path
+                v-else
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
 
-        <button
-          ref="menuButton"
-          type="button"
-          class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold lg:hidden"
-          :aria-expanded="menuOpen"
-          aria-controls="mobile-nav"
-          :aria-label="menuOpen ? 'Close menu' : 'Open menu'"
-          @click="toggleMenu"
-        >
-          <svg v-if="!menuOpen" class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-          <svg v-else class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </button>
+      <div v-if="menuOpen" class="pb-3 lg:hidden" id="mobile-nav">
+        <nav class="space-y-1 px-2 pt-2 sm:px-3" aria-label="Mobile">
+          <template v-for="link in navLinks" :key="`m-${link.href}`">
+            <RouterLink
+              v-if="isAppPath(link.href)"
+              :to="link.href"
+              class="block w-full rounded-md px-3 py-2.5 text-base font-medium text-slate-100 hover:bg-white/5 hover:text-yom-gold-soft"
+              @click="closeMenu"
+            >
+              {{ link.label }}
+            </RouterLink>
+            <a
+              v-else
+              :href="navHref(link.href)"
+              :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
+              :data-contact-source="link.href === '#contact-section' ? 'Mobile navigation' : undefined"
+              class="block w-full rounded-md px-3 py-2.5 text-base font-medium text-slate-100 hover:bg-white/5 hover:text-yom-gold-soft"
+              @click="closeMenu"
+            >
+              {{ link.label }}
+            </a>
+          </template>
+          <a
+            :href="navHref(hero.primaryCta.href)"
+            :target="hero.primaryCta.external ? '_blank' : undefined"
+            :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
+            :data-contact-subject="hero.primaryCta.contactSubject"
+            :data-contact-source="hero.primaryCta.contactSource"
+            class="mt-2 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-4 py-2.5 text-sm font-bold text-yom-navy"
+            @click="closeMenu"
+          >
+            {{ hero.primaryCta.label }}
+          </a>
+        </nav>
       </div>
     </div>
-
-    <div
-      v-if="menuOpen"
-      class="border-t border-white/10 bg-yom-navy lg:hidden"
-      id="mobile-nav"
-    >
-      <nav class="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6" aria-label="Mobile">
-        <template v-for="link in navLinks" :key="`m-${link.href}`">
-          <RouterLink
-            v-if="isAppPath(link.href)"
-            :to="link.href"
-            class="rounded-xl px-4 py-3 text-base font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
-            @click="closeMenu"
-          >
-            {{ link.label }}
-          </RouterLink>
-          <a
-            v-else
-            :href="navHref(link.href)"
-            :data-contact-subject="link.href === '#contact-section' ? 'General enquiry — Navigation' : undefined"
-            :data-contact-source="link.href === '#contact-section' ? 'Mobile navigation' : undefined"
-            class="rounded-xl px-4 py-3 text-base font-medium text-slate-200 transition hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
-            @click="closeMenu"
-          >
-            {{ link.label }}
-          </a>
-        </template>
-        <a
-          :href="navHref(hero.primaryCta.href)"
-          :target="hero.primaryCta.external ? '_blank' : undefined"
-          :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
-          :data-contact-subject="hero.primaryCta.contactSubject"
-          :data-contact-source="hero.primaryCta.contactSource"
-          class="mt-2 inline-flex items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-4 py-3 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/25 transition hover:brightness-105 sm:hidden"
-          @click="closeMenu"
-        >
-          {{ hero.primaryCta.label }}
-        </a>
-      </nav>
-    </div>
   </header>
+  <div class="h-16 shrink-0" aria-hidden="true" />
 </template>

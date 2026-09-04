@@ -2,7 +2,6 @@
 import { nextTick, ref, watch } from 'vue'
 import { answerQuestion } from '@/lib/assistant'
 import { brand } from '@/data/site'
-import BrandLogo from '@/components/BrandLogo.vue'
 import { openContactForm } from '@/lib/contact'
 
 type ChatMessage = {
@@ -53,7 +52,7 @@ watch(
 
 watch([messages, isTyping, isOpen], async () => {
   await nextTick()
-  messagesEnd.value?.scrollIntoView({ behavior: 'smooth' })
+  messagesEnd.value?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' })
 })
 
 function formatTime(iso: string) {
@@ -107,40 +106,59 @@ function onKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <div>
-    <button
-      v-if="!isOpen"
-      type="button"
-      class="fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft text-yom-navy shadow-lg shadow-yom-gold/30 transition hover:scale-110 hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold md:bottom-6 md:right-6"
-      aria-label="Open AI assistant"
-      @click="isOpen = true"
+  <!--
+    fixed inset-0 = the phone screen itself (not the page).
+    absolute children sit inside that screen box, so they cannot widen the layout.
+    Teleport to body so App overflow/transform cannot trap position:fixed.
+  -->
+  <Teleport to="body">
+    <div
+      class="pointer-events-none fixed inset-0 z-50 overflow-hidden pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
     >
-      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path
-          d="M4 12a8 8 0 018-8h1a7 7 0 017 7v5.2A1.8 1.8 0 0118.2 18H9l-3.6 2.4A.8.8 0 014 19.7V12z"
-          stroke="currentColor"
-          stroke-width="1.8"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </button>
+      <button
+        v-if="!isOpen"
+        type="button"
+        class="pointer-events-auto absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft text-yom-navy shadow-lg shadow-yom-gold/30 transition hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold md:bottom-6 md:right-6 md:h-14 md:w-14"
+        aria-label="Open AI assistant"
+        @click="isOpen = true"
+      >
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M4 12a8 8 0 018-8h1a7 7 0 017 7v5.2A1.8 1.8 0 0118.2 18H9l-3.6 2.4A.8.8 0 014 19.7V12z"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
 
-    <section
-      v-if="isOpen"
-      class="fixed bottom-20 right-2 left-2 z-50 flex h-[70vh] max-h-[500px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white shadow-2xl md:bottom-24 md:left-auto md:right-6 md:w-96"
-      aria-label="YOM AI assistant"
-    >
-      <header class="flex items-center justify-between bg-yom-navy px-4 py-3 text-white">
-        <div>
-          <p class="flex items-center gap-3 text-sm font-semibold">
-            <BrandLogo compact />
-            <span>AI Assistant</span>
+      <section
+        v-if="isOpen"
+        class="pointer-events-auto absolute bottom-20 left-2 right-2 flex h-[70vh] max-h-[500px] max-w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white shadow-2xl md:bottom-24 md:left-auto md:right-6 md:w-96"
+        aria-label="YOM AI assistant"
+      >
+      <header class="flex min-w-0 items-center justify-between gap-2 bg-yom-navy px-3 py-3 text-white">
+        <div class="min-w-0">
+          <p class="flex min-w-0 items-center gap-2 text-sm font-semibold">
+            <span
+              class="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-[#1a3358] ring-1 ring-white/70"
+              aria-hidden="true"
+            >
+              <img
+                src="/images/yom-original-logo.png"
+                alt=""
+                width="32"
+                height="32"
+                class="absolute left-1/2 top-[36%] h-[175%] w-[175%] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover object-[center_8%]"
+              />
+            </span>
+            <span class="truncate">AI Assistant</span>
           </p>
-          <p class="mt-1 text-[11px] uppercase tracking-[0.16em] text-yom-gold-soft">Online · services brief</p>
+          <p class="mt-1 truncate text-[11px] uppercase tracking-wide text-yom-gold-soft">Online · services brief</p>
         </div>
         <button
           type="button"
-          class="rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
+          class="shrink-0 rounded-full p-2 text-white/80 transition hover:bg-white/10 hover:text-white"
           aria-label="Close assistant"
           @click="isOpen = false"
         >
@@ -210,6 +228,7 @@ function onKeydown(event: KeyboardEvent) {
           </svg>
         </button>
       </div>
-    </section>
-  </div>
+      </section>
+    </div>
+  </Teleport>
 </template>

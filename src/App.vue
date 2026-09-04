@@ -40,7 +40,7 @@ watch(
 
 <template>
   <HostingUnavailableView v-if="route.path === '/' && homepageDisabled" />
-  <div v-else class="min-h-screen flex flex-col bg-white">
+  <div v-else class="flex min-h-screen w-full max-w-full flex-col overflow-x-hidden bg-white">
     <AppHeader v-if="!hidePublicChrome" />
     <RouterView />
     <AppFooter v-if="!hidePublicChrome" />

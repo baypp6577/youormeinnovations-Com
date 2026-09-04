@@ -311,7 +311,7 @@ onUnmounted(() => {
       <p v-if="errors.message" class="mt-1 text-sm text-red-600">{{ errors.message }}</p>
     </div>
 
-    <div class="absolute -left-[10000px] h-px w-px overflow-hidden" aria-hidden="true">
+    <div class="absolute h-px w-px overflow-hidden [clip:rect(0,0,0,0)]" aria-hidden="true">
       <label for="contact-company">Company</label>
       <input id="contact-company" :value="form.company" tabindex="-1" autocomplete="off" @input="onInput('company', ($event.target as HTMLInputElement).value)" />
       <label for="contact-website">Website</label>

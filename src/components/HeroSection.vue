@@ -90,7 +90,7 @@ onUnmounted(() => observer?.disconnect())
           :rel="hero.primaryCta.external ? 'noopener noreferrer' : undefined"
           :data-contact-subject="hero.primaryCta.contactSubject"
           :data-contact-source="hero.primaryCta.contactSource"
-          class="inline-flex min-w-[200px] items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-7 py-3.5 text-sm font-bold text-yom-navy shadow-lg shadow-yom-gold/30 transition hover:scale-[1.02] hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold"
+          class="inline-flex w-full max-w-xs items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-7 py-3.5 text-sm font-bold text-yom-navy shadow-lg shadow-yom-gold/30 transition hover:scale-[1.02] hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yom-gold sm:w-auto sm:min-w-[200px]"
         >
           {{ hero.primaryCta.label }}
         </a>
@@ -98,7 +98,7 @@ onUnmounted(() => observer?.disconnect())
           :href="hero.secondaryCta.href"
           :target="hero.secondaryCta.external ? '_blank' : undefined"
           :rel="hero.secondaryCta.external ? 'noopener noreferrer' : undefined"
-          class="inline-flex min-w-[200px] items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          class="inline-flex w-full max-w-xs items-center justify-center rounded-full border border-white/25 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-auto sm:min-w-[200px]"
         >
           {{ hero.secondaryCta.label }}
         </a>
