@@ -12,9 +12,9 @@ function isAppPath(href: string) {
 
 <template>
   <footer id="contact" class="bg-yom-navy text-slate-200">
-    <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-5 lg:px-8">
-      <div class="lg:col-span-1">
-        <div class="mb-4">
+    <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div class="mb-12 flex flex-col items-center text-center">
+        <div class="mb-4 flex justify-center">
           <BrandLogo grow-on-desktop />
         </div>
         <p class="max-w-md text-sm leading-relaxed text-slate-300">
@@ -25,6 +25,7 @@ function isAppPath(href: string) {
         </p>
       </div>
 
+      <div class="grid grid-cols-2 gap-10 md:grid-cols-4">
       <div>
         <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-yom-gold">Company</h2>
         <ul class="space-y-2 text-sm">
@@ -92,6 +93,7 @@ function isAppPath(href: string) {
         <p v-if="contact.socialNote" class="mt-2 text-xs text-slate-400">
           {{ contact.socialNote }}
         </p>
+      </div>
       </div>
     </div>
 

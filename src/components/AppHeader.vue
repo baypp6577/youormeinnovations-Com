@@ -55,12 +55,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- Same shell as hometolive.net: fixed full-width, h-16 row, logo + hamburger on phone -->
   <header class="fixed top-0 left-0 z-50 w-full border-b border-white/10 bg-yom-navy shadow-lg">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-16 items-center justify-between">
-        <RouterLink to="/" class="flex items-center no-underline" aria-label="You Or Me Innovations" @click="closeMenu">
-          <BrandLogo compact />
+      <div class="flex items-center justify-between gap-3 py-3 lg:py-5">
+        <RouterLink to="/" class="flex min-w-0 items-center no-underline" aria-label="You Or Me Innovations" @click="closeMenu">
+          <BrandLogo compact grow-on-desktop />
         </RouterLink>
 
         <nav class="relative hidden items-center gap-1 lg:flex" aria-label="Primary">
@@ -163,5 +162,5 @@ onUnmounted(() => {
       </div>
     </div>
   </header>
-  <div class="h-16 shrink-0" aria-hidden="true" />
+  <div class="h-[4.5rem] shrink-0 lg:h-[7.25rem]" aria-hidden="true" />
 </template>
