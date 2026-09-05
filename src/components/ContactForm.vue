@@ -179,10 +179,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <form class="relative grid gap-4" @submit.prevent="onSubmit" novalidate>
+  <form class="relative grid min-w-0 gap-4" @submit.prevent="onSubmit" novalidate>
     <div
       v-if="submitStatus"
-      class="rounded-2xl px-4 py-3 text-sm"
+      class="break-words rounded-2xl px-3 py-3 text-sm sm:px-4"
       :class="submitOk ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-700'"
     >
       {{ submitStatus }}
@@ -190,12 +190,12 @@ onUnmounted(() => {
 
     <div
       v-if="interestedBanner"
-      class="rounded-2xl border border-yom-blue/20 bg-yom-blue/5 px-4 py-3 text-sm text-yom-navy"
+      class="break-words rounded-2xl border border-yom-blue/20 bg-yom-blue/5 px-3 py-3 text-sm text-yom-navy sm:px-4"
     >
       You’re enquiring about <span class="font-semibold">{{ interestedBanner }}</span>
     </div>
 
-    <div>
+    <div class="min-w-0">
       <label for="contact-name" class="mb-1 block text-sm font-medium text-slate-700">Name *</label>
       <input
         id="contact-name"
@@ -204,16 +204,16 @@ onUnmounted(() => {
         autocomplete="name"
         maxlength="80"
         placeholder="Your name"
-        class="w-full rounded-2xl border px-4 py-3 text-sm outline-none transition focus:border-yom-blue"
+        class="w-full max-w-full rounded-2xl border px-3 py-3 text-sm outline-none transition focus:border-yom-blue sm:px-4"
         :class="errors.name ? 'border-red-500' : 'border-slate-200'"
         :disabled="isSubmitting"
         @input="onInput('name', ($event.target as HTMLInputElement).value)"
         @blur="onBlur('name', form.name)"
       />
-      <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
+      <p v-if="errors.name" class="mt-1 break-words text-sm text-red-600">{{ errors.name }}</p>
     </div>
 
-    <div>
+    <div class="min-w-0">
       <label for="contact-email" class="mb-1 block text-sm font-medium text-slate-700">Email *</label>
       <input
         id="contact-email"
@@ -221,22 +221,22 @@ onUnmounted(() => {
         type="email"
         autocomplete="email"
         placeholder="you@company.com"
-        class="w-full rounded-2xl border px-4 py-3 text-sm outline-none transition focus:border-yom-blue"
+        class="w-full max-w-full rounded-2xl border px-3 py-3 text-sm outline-none transition focus:border-yom-blue sm:px-4"
         :class="errors.email ? 'border-red-500' : 'border-slate-200'"
         :disabled="isSubmitting"
         @input="onInput('email', ($event.target as HTMLInputElement).value)"
         @blur="onBlur('email', form.email)"
       />
-      <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
+      <p v-if="errors.email" class="mt-1 break-words text-sm text-red-600">{{ errors.email }}</p>
     </div>
 
-    <div>
+    <div class="min-w-0">
       <label for="contact-phone" class="mb-1 block text-sm font-medium text-slate-700">Phone number</label>
-      <div class="flex gap-2">
+      <div class="flex min-w-0 gap-2">
         <select
           id="contact-country"
           v-model="form.countryCode"
-          class="rounded-2xl border border-slate-200 px-3 py-3 text-sm outline-none transition focus:border-yom-blue"
+          class="max-w-[7.5rem] shrink-0 rounded-2xl border border-slate-200 px-2 py-3 text-sm outline-none transition focus:border-yom-blue sm:max-w-none sm:px-3"
           :disabled="isSubmitting"
         >
           <option v-for="code in COUNTRY_CODES" :key="code.value" :value="code.value">{{ code.label }}</option>
@@ -247,17 +247,17 @@ onUnmounted(() => {
           type="tel"
           autocomplete="tel-national"
           placeholder="7700 900000"
-          class="min-w-0 flex-1 rounded-2xl border px-4 py-3 text-sm outline-none transition focus:border-yom-blue"
+          class="min-w-0 flex-1 rounded-2xl border px-3 py-3 text-sm outline-none transition focus:border-yom-blue sm:px-4"
           :class="errors.phone ? 'border-red-500' : 'border-slate-200'"
           :disabled="isSubmitting"
           @input="onInput('phone', ($event.target as HTMLInputElement).value)"
           @blur="onBlur('phone', form.phone)"
         />
       </div>
-      <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
+      <p v-if="errors.phone" class="mt-1 break-words text-sm text-red-600">{{ errors.phone }}</p>
     </div>
 
-    <div>
+    <div class="min-w-0">
       <label for="contact-subject" class="mb-1 block text-sm font-medium text-slate-700">Subject *</label>
       <input
         id="contact-subject"
@@ -265,20 +265,20 @@ onUnmounted(() => {
         type="text"
         maxlength="120"
         placeholder="How can we help you?"
-        class="w-full rounded-2xl border px-4 py-3 text-sm outline-none transition focus:border-yom-blue"
+        class="w-full max-w-full rounded-2xl border px-3 py-3 text-sm outline-none transition focus:border-yom-blue sm:px-4"
         :class="errors.subject ? 'border-red-500' : 'border-slate-200'"
         :disabled="isSubmitting"
         @input="onInput('subject', ($event.target as HTMLInputElement).value)"
         @blur="onBlur('subject', form.subject)"
       />
-      <p v-if="errors.subject" class="mt-1 text-sm text-red-600">{{ errors.subject }}</p>
+      <p v-if="errors.subject" class="mt-1 break-words text-sm text-red-600">{{ errors.subject }}</p>
     </div>
 
-    <div>
+    <div class="min-w-0">
       <label for="contact-need" class="mb-1 block text-sm font-medium text-slate-700">What do you need help with?</label>
       <select
         id="contact-need"
-        class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-yom-blue"
+        class="w-full max-w-full rounded-2xl border border-slate-200 px-3 py-3 text-sm text-slate-700 outline-none transition focus:border-yom-blue sm:px-4"
         :disabled="isSubmitting"
         @change="
           onInput(
@@ -294,7 +294,7 @@ onUnmounted(() => {
       </select>
     </div>
 
-    <div>
+    <div class="min-w-0">
       <label for="contact-message" class="mb-1 block text-sm font-medium text-slate-700">Message *</label>
       <textarea
         id="contact-message"
@@ -302,13 +302,13 @@ onUnmounted(() => {
         rows="5"
         maxlength="1000"
         placeholder="Tell us more about your project..."
-        class="w-full rounded-2xl border px-4 py-3 text-sm outline-none transition focus:border-yom-blue"
+        class="w-full max-w-full resize-y rounded-2xl border px-3 py-3 text-sm outline-none transition focus:border-yom-blue sm:px-4"
         :class="errors.message ? 'border-red-500' : 'border-slate-200'"
         :disabled="isSubmitting"
         @input="onInput('message', ($event.target as HTMLTextAreaElement).value)"
         @blur="onBlur('message', form.message)"
       />
-      <p v-if="errors.message" class="mt-1 text-sm text-red-600">{{ errors.message }}</p>
+      <p v-if="errors.message" class="mt-1 break-words text-sm text-red-600">{{ errors.message }}</p>
     </div>
 
     <div class="absolute h-px w-px overflow-hidden [clip:rect(0,0,0,0)]" aria-hidden="true">
@@ -320,7 +320,7 @@ onUnmounted(() => {
 
     <button
       type="submit"
-      class="inline-flex justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-5 py-3 text-sm font-semibold text-yom-navy transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70"
+      class="inline-flex w-full max-w-full justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-5 py-3 text-sm font-semibold text-yom-navy transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
       :disabled="isSubmitting"
     >
       {{ isSubmitting ? 'Sending…' : contactSection.submitLabel }}
