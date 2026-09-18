@@ -316,6 +316,64 @@
     ],
     "submitLabel": "Send My Enquiry"
   },
+  "thankYou": {
+    "eyebrow": "Purchase complete",
+    "title": "Thank you for your purchase",
+    "subtitle": "Download your PDF below. Keep this page open until the file is saved — it is not a free public link on the website.",
+    "note": "Each purchase unlocks the next product in the ladder. Your receipt is also in your Stripe email.",
+    "homeCta": { "label": "Back to homepage", "href": "/" },
+    "contactCta": {
+      "label": "Need help?",
+      "href": "/#contact-section",
+      "contactSubject": "Help after purchase — Thank you page",
+      "contactSource": "Thank you page"
+    },
+    "upgrades": {
+      "eyebrow": "Next step",
+      "title": "Ready for the next level?",
+      "description": "Each purchase unlocks the next higher product — one step at a time. Download your PDF above first.",
+      "completeTitle": "You are at the top",
+      "completeDescription": "Thank you — you have the highest product in this range. Use Download your PDF above if you have not saved it yet.",
+      "items": [
+        {
+          "id": "product-1",
+          "name": "Product 1",
+          "price": "See Stripe",
+          "tagline": "Starter download",
+          "description": "Confirm the exact title and price with your Stripe Payment Link details.",
+          "cta": "Get Product 1",
+          "paymentUrl": "https://buy.stripe.com/aFa9AT48K1Jif2F3gq2sM03"
+        },
+        {
+          "id": "product-2",
+          "name": "Product 2",
+          "price": "See Stripe",
+          "tagline": "Next level",
+          "description": "Confirm the exact title and price with your Stripe Payment Link details.",
+          "cta": "Upgrade to Product 2",
+          "paymentUrl": "https://buy.stripe.com/fZuaEXeNoew45s5bMW2sM04"
+        },
+        {
+          "id": "product-3",
+          "name": "Product 3",
+          "price": "See Stripe",
+          "tagline": "Higher tier",
+          "description": "Confirm the exact title and price with your Stripe Payment Link details.",
+          "cta": "Upgrade to Product 3",
+          "paymentUrl": "https://buy.stripe.com/fZu14n9t45Zy8Eh04e2sM05"
+        },
+        {
+          "id": "product-4",
+          "name": "Product 4",
+          "price": "See Stripe",
+          "tagline": "Top tier",
+          "description": "Confirm the exact title and price with your Stripe Payment Link details.",
+          "cta": "Upgrade to Product 4",
+          "paymentUrl": "https://buy.stripe.com/4gMbJ18p09bK1bP9EO2sM06"
+        }
+      ]
+    }
+  },
   "seo": {
     "title": "You Or Me Innovations | AI Digital Marketing, PR & Brand Growth",
     "description": "You Or Me Innovations helps businesses and global brands grow through AI-powered digital marketing, PR, content, branding and community engagement. Connect with the audiences that matter."

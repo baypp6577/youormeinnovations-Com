@@ -192,6 +192,30 @@ export type SiteContent = {
     services: string[]
     submitLabel: string
   }
+  thankYou: {
+    eyebrow: string
+    title: string
+    subtitle: string
+    note: string
+    homeCta: SiteLink
+    contactCta: SiteLink
+    upgrades: {
+      eyebrow: string
+      title: string
+      description: string
+      completeTitle: string
+      completeDescription: string
+      items: Array<{
+        id: string
+        name: string
+        price: string
+        tagline: string
+        description: string
+        cta: string
+        paymentUrl: string
+      }>
+    }
+  }
   seo: {
     title: string
     description: string
@@ -219,6 +243,7 @@ export const team = content.team
 export const blog = content.blog
 export const finalCta = content.finalCta
 export const contactSection = content.contactSection
+export const thankYou = content.thankYou
 export const seo = content.seo
 
 /** @deprecated use services.pillars */

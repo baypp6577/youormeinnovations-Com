@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.0",
     "@vueuse/core": "^14.2.1",
     "d3": "^7.9.0",
     "resend": "^6.20.0",

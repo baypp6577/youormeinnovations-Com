@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import { BLOG_ADMIN_PATH } from '@/lib/adminPaths'
+import { BLOG_ADMIN_PATH, DIGITAL_PRODUCTS_ADMIN_PATH } from '@/lib/adminPaths'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,6 +9,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/thank-you',
+      name: 'thank-you',
+      component: () => import('@/views/ThankYouView.vue'),
     },
     {
       path: '/blog',
@@ -24,6 +29,11 @@ const router = createRouter({
       path: BLOG_ADMIN_PATH,
       name: 'blog-admin',
       component: () => import('@/views/BlogAdminView.vue'),
+    },
+    {
+      path: DIGITAL_PRODUCTS_ADMIN_PATH,
+      name: 'digital-products-admin',
+      component: () => import('@/views/DigitalProductsAdminView.vue'),
     },
   ],
   scrollBehavior(to) {
