@@ -272,10 +272,10 @@ export function answerQuestion(userInput: string): AssistantReply {
     }
   }
 
-  if (/\b(portal|login|dashboard|track progress|approve design)\b/.test(q)) {
+  if (/\b(portal|login|dashboard|admin|pdf upload|digital products)\b/.test(q)) {
     return {
-      text: `${portal.title}\n\n${portal.description}\n\n${portal.points.join(' · ')}\n\nExisting clients can sign in to their project portal. New projects start with the contact form on this site.`,
-      navigation: { url: '#portal', label: 'See the client portal' },
+      text: `${portal.title}\n\n${portal.description}\n\n${portal.points.join(' · ')}\n\nOpen Site admin on this website to manage PDFs and blog posts.`,
+      navigation: { url: '#portal', label: 'See site admin' },
     }
   }
 

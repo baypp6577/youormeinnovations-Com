@@ -31,7 +31,7 @@
     ],
     "client": [
       { "label": "Start Your Project", "href": "#contact-section", "contactSubject": "Start Your Project — Footer", "contactSource": "Footer client links" },
-      { "label": "Client Portal", "href": "https://hometolive.net/client/login?clientId=youorme", "external": true }
+      { "label": "Site admin", "href": "/y8m4k2n7", "external": false }
     ],
     "legal": [
       { "label": "Privacy Policy", "href": "#" },
@@ -43,7 +43,7 @@
     "website": "https://youormeinnovations.com",
     "servicesLine": "PR · Digital Marketing · Branding · Content · Community · Guided Digital Delivery",
     "socialNote": "Social links will be added once approved.",
-    "portal": "https://hometolive.net/client/login?clientId=youorme"
+    "portal": "https://www.youormeinnovations.com/y8m4k2n7"
   },
   "hero": {
     "eyebrow": "AI-powered digital marketing · PR · brand growth",
@@ -205,20 +205,20 @@
     ]
   },
   "portal": {
-    "eyebrow": "Client portal",
-    "title": "Your project. Your portal. Your progress.",
-    "description": "Everything in one place. Clients can access a dedicated project environment to stay informed throughout their journey. From the initial brief through delivery, our guided process gives you greater visibility and control.",
+    "eyebrow": "Site admin",
+    "title": "Your site. Your products. Your content.",
+    "description": "Sign in to the You Or Me admin on this website to upload product PDFs, edit the purchase ladder, and publish blog posts. This is your site admin — not the HomeToLive project board.",
     "points": [
-      "Track progress",
-      "Review work",
-      "Approve designs",
-      "Receive updates",
-      "Stay connected"
+      "Upload private product PDFs",
+      "Edit Stripe ladder details",
+      "Publish blog posts",
+      "Keep downloads private",
+      "Manage content on your domain"
     ],
     "cta": {
-      "label": "Access Client Portal",
-      "href": "https://hometolive.net/client/login?clientId=youorme",
-      "external": true
+      "label": "Open site admin",
+      "href": "/y8m4k2n7",
+      "external": false
     }
   },
   "projects": {

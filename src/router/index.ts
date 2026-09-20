@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import { BLOG_ADMIN_PATH, DIGITAL_PRODUCTS_ADMIN_PATH } from '@/lib/adminPaths'
+import { ADMIN_HUB_PATH, BLOG_ADMIN_PATH, DIGITAL_PRODUCTS_ADMIN_PATH } from '@/lib/adminPaths'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +24,11 @@ const router = createRouter({
       path: '/blog/:slug',
       name: 'blog-post',
       component: () => import('@/views/BlogPostView.vue'),
+    },
+    {
+      path: ADMIN_HUB_PATH,
+      name: 'admin-hub',
+      component: () => import('@/views/AdminHubView.vue'),
     },
     {
       path: BLOG_ADMIN_PATH,
