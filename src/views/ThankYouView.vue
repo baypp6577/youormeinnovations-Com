@@ -147,6 +147,31 @@ async function downloadPdf() {
   }
 }
 
+const checkoutBusy = ref(false)
+const checkoutError = ref('')
+
+async function startCheckout(productId: string) {
+  checkoutError.value = ''
+  checkoutBusy.value = true
+  try {
+    const res = await fetch('/api/digital-products?action=create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId }),
+    })
+    const data = (await res.json()) as { ok?: boolean; url?: string; error?: string }
+    if (!res.ok || !data.ok || !data.url) {
+      checkoutError.value = data.error || 'Could not start checkout.'
+      return
+    }
+    window.location.href = data.url
+  } catch {
+    checkoutError.value = 'Could not start checkout.'
+  } finally {
+    checkoutBusy.value = false
+  }
+}
+
 watch(
   () => [sessionId.value, queryProductId.value] as const,
   () => {
@@ -249,17 +274,17 @@ onMounted(async () => {
         <p class="mt-2 font-display text-3xl font-bold text-yom-navy">{{ nextUpgrade.price }}</p>
         <p class="mt-1 text-sm text-slate-500">{{ nextUpgrade.tagline }}</p>
         <p class="mt-4 text-sm leading-relaxed text-slate-600">{{ nextUpgrade.description }}</p>
-        <a
-          v-if="nextUpgrade.paymentUrl"
-          :href="nextUpgrade.paymentUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mt-8 inline-flex rounded-full bg-yom-blue px-6 py-3 text-sm font-semibold text-white transition hover:bg-yom-navy"
+        <p v-if="checkoutError" class="mt-4 text-sm text-rose-600">{{ checkoutError }}</p>
+        <button
+          type="button"
+          class="mt-8 inline-flex rounded-full bg-yom-blue px-6 py-3 text-sm font-semibold text-white transition hover:bg-yom-navy disabled:opacity-60"
+          :disabled="checkoutBusy"
+          @click="startCheckout(nextUpgrade.id)"
         >
-          {{ nextUpgrade.cta }}
-        </a>
-        <p v-else class="mt-8 text-sm font-medium text-slate-500">
-          Checkout link coming soon — we will update this as soon as the Payment Link is ready.
+          {{ checkoutBusy ? 'Opening checkout…' : nextUpgrade.cta }}
+        </button>
+        <p class="mt-3 text-xs text-slate-500">
+          Secure Stripe checkout — same flow as HomeToLive (redirect set in code).
         </p>
       </article>
     </div>

@@ -61,6 +61,7 @@ async function api(action: string, payload: Record<string, unknown> = {}, method
     product?: Product
     blobConfigured?: boolean
     stripeConfigured?: boolean
+    results?: Array<{ id: string; ok: boolean; error?: string; paymentLinkId?: string }>
   }
   return { status: res.status, data }
 }
@@ -191,8 +192,30 @@ function previewUrl(id: string) {
   return `/api/digital-products?action=download&product=${encodeURIComponent(id)}&preview=1`
 }
 
+const syncingRedirects = ref(false)
 const thankYouRedirect =
   'https://youormeinnovations.com/thank-you?session_id={CHECKOUT_SESSION_ID}'
+
+async function syncStripeRedirects() {
+  syncingRedirects.value = true
+  flash('')
+  const { data } = await api('sync-redirects', {})
+  syncingRedirects.value = false
+  if (!data.ok && !Array.isArray(data.results)) {
+    flash(data.error || 'Could not sync Stripe redirects.', true)
+    return
+  }
+  const results = (data.results as Array<{ id: string; ok: boolean; error?: string }>) || []
+  const failed = results.filter((r) => !r.ok)
+  if (failed.length) {
+    flash(
+      `Synced with errors: ${failed.map((f) => `${f.id}: ${f.error || 'failed'}`).join('; ')}`,
+      true,
+    )
+    return
+  }
+  flash('All Payment Links now redirect to thank-you after payment (wired in Stripe via API).')
+}
 
 onMounted(() => {
   document.title = 'Digital Products | You Or Me Innovations'
@@ -257,9 +280,18 @@ onMounted(() => {
             </span>
           </p>
           <p class="mt-2">
-            Use this same After payment URL on <strong>all four</strong> Payment Links (product is detected from Stripe):
+            Checkout works like HomeToLive: the site creates a Stripe Checkout Session and sets the return URL in code.
+            Buyers land on:
             <code class="mt-1 block break-all text-xs text-yom-navy">{{ thankYouRedirect }}</code>
           </p>
+          <button
+            type="button"
+            class="mt-3 inline-flex rounded-full border border-yom-navy/20 bg-white px-4 py-2 text-xs font-semibold text-yom-navy hover:bg-slate-50 disabled:opacity-60"
+            :disabled="syncingRedirects || !stripeConfigured"
+            @click="syncStripeRedirects"
+          >
+            {{ syncingRedirects ? 'Wiring…' : 'Wire all Payment Link redirects in Stripe' }}
+          </button>
         </div>
 
         <p v-if="notice" class="text-sm" :class="noticeErr ? 'text-red-700' : 'text-emerald-700'">{{ notice }}</p>

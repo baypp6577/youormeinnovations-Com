@@ -350,12 +350,160 @@ function parsePricePence(price: string): number | null {
   return Math.round(Number(m[1]) * 100)
 }
 
+const THANK_YOU_SUCCESS =
+  'https://youormeinnovations.com/thank-you?session_id={CHECKOUT_SESSION_ID}'
+const CHECKOUT_CANCEL = 'https://youormeinnovations.com/'
+
 async function stripeGet<T>(path: string, secret: string): Promise<T | null> {
   const res = await fetch(`https://api.stripe.com/v1/${path}`, {
     headers: { Authorization: `Bearer ${secret}` },
   })
   if (!res.ok) return null
   return (await res.json()) as T
+}
+
+async function stripeForm<T>(
+  path: string,
+  secret: string,
+  params: URLSearchParams,
+  method: 'POST' | 'GET' = 'POST',
+): Promise<{ ok: true; data: T } | { ok: false; status: number; error: string }> {
+  const res = await fetch(`https://api.stripe.com/v1/${path}`, {
+    method,
+    headers: {
+      Authorization: `Bearer ${secret}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: method === 'POST' ? params.toString() : undefined,
+  })
+  const data = (await res.json().catch(() => null)) as T & { error?: { message?: string } }
+  if (!res.ok) {
+    return {
+      ok: false,
+      status: res.status,
+      error: String(data?.error?.message || `Stripe ${res.status}`),
+    }
+  }
+  return { ok: true, data }
+}
+
+type StripePaymentLink = {
+  id: string
+  url?: string
+  active?: boolean
+  metadata?: Record<string, string>
+  line_items?: { data?: Array<{ price?: { id?: string } | string; quantity?: number }> }
+}
+
+async function listPaymentLinks(secret: string): Promise<StripePaymentLink[]> {
+  const out: StripePaymentLink[] = []
+  let startingAfter = ''
+  for (let page = 0; page < 10; page++) {
+    const q = new URLSearchParams({ limit: '100', active: 'true' })
+    if (startingAfter) q.set('starting_after', startingAfter)
+    const batch = await stripeGet<{ data?: StripePaymentLink[]; has_more?: boolean }>(
+      `payment_links?${q.toString()}`,
+      secret,
+    )
+    const rows = batch?.data || []
+    out.push(...rows)
+    if (!batch?.has_more || !rows.length) break
+    startingAfter = rows[rows.length - 1]?.id || ''
+    if (!startingAfter) break
+  }
+  return out
+}
+
+async function findPaymentLinkByBuyUrl(
+  secret: string,
+  buyUrl: string,
+): Promise<StripePaymentLink | null> {
+  const want = normalizeBuyUrl(buyUrl)
+  if (!want) return null
+  const links = await listPaymentLinks(secret)
+  return links.find((l) => normalizeBuyUrl(String(l.url || '')) === want) || null
+}
+
+async function paymentLinkPriceIds(
+  secret: string,
+  paymentLinkId: string,
+): Promise<Array<{ price: string; quantity: number }>> {
+  const link = await stripeGet<StripePaymentLink>(
+    `payment_links/${encodeURIComponent(paymentLinkId)}?expand[]=line_items.data.price`,
+    secret,
+  )
+  const rows = link?.line_items?.data || []
+  const items: Array<{ price: string; quantity: number }> = []
+  for (const row of rows) {
+    const priceId =
+      typeof row.price === 'string' ? row.price : String(row.price?.id || '').trim()
+    if (!priceId) continue
+    items.push({ price: priceId, quantity: Math.max(1, Number(row.quantity) || 1) })
+  }
+  return items
+}
+
+/** Front-style: create Checkout Session in code with success_url (no Dashboard After payment needed). */
+async function createCheckoutSessionForProduct(
+  product: DigitalProduct,
+): Promise<{ ok: true; url: string; sessionId: string } | { ok: false; error: string }> {
+  const secret = stripeSecret()
+  if (!secret) return { ok: false, error: 'Stripe secret is not configured.' }
+  if (!product.paymentUrl) return { ok: false, error: 'Product has no Payment Link URL.' }
+
+  const plink = await findPaymentLinkByBuyUrl(secret, product.paymentUrl)
+  if (!plink?.id) {
+    return {
+      ok: false,
+      error: 'Could not find that buy.stripe.com Payment Link in Stripe. Check the URL in admin.',
+    }
+  }
+  const lineItems = await paymentLinkPriceIds(secret, plink.id)
+  if (!lineItems.length) {
+    return { ok: false, error: 'Payment Link has no prices/line items.' }
+  }
+
+  const params = new URLSearchParams()
+  params.set('mode', 'payment')
+  params.set('success_url', THANK_YOU_SUCCESS)
+  params.set('cancel_url', CHECKOUT_CANCEL)
+  params.set('metadata[productId]', product.id)
+  params.set('payment_intent_data[metadata][productId]', product.id)
+  lineItems.forEach((item, i) => {
+    params.set(`line_items[${i}][price]`, item.price)
+    params.set(`line_items[${i}][quantity]`, String(item.quantity))
+  })
+
+  const created = await stripeForm<{ id?: string; url?: string }>(
+    'checkout/sessions',
+    secret,
+    params,
+  )
+  if (!created.ok) return { ok: false, error: created.error }
+  const url = String(created.data.url || '').trim()
+  const sessionId = String(created.data.id || '').trim()
+  if (!url || !sessionId) return { ok: false, error: 'Stripe did not return a checkout URL.' }
+  return { ok: true, url, sessionId }
+}
+
+/** Point existing Payment Links at thank-you (so direct buy.stripe.com clicks also land correctly). */
+async function syncPaymentLinkRedirect(
+  secret: string,
+  product: DigitalProduct,
+): Promise<{ ok: true; paymentLinkId: string } | { ok: false; error: string }> {
+  const plink = await findPaymentLinkByBuyUrl(secret, product.paymentUrl)
+  if (!plink?.id) return { ok: false, error: `No Payment Link for ${product.id}` }
+  const params = new URLSearchParams()
+  params.set('after_completion[type]', 'redirect')
+  params.set('after_completion[redirect][url]', THANK_YOU_SUCCESS)
+  params.set('metadata[productId]', product.id)
+  const updated = await stripeForm<{ id?: string }>(
+    `payment_links/${encodeURIComponent(plink.id)}`,
+    secret,
+    params,
+  )
+  if (!updated.ok) return { ok: false, error: updated.error }
+  return { ok: true, paymentLinkId: plink.id }
 }
 
 /** Resolve which ladder product a paid Checkout Session belongs to (metadata, Payment Link URL, or amount). */
@@ -548,8 +696,42 @@ export default async function handler(req: Req, res: Res) {
     return streamPdf(res, product.blobPathname, product.fileName)
   }
 
+  /** Same pattern as front.hometolive.com: success_url set in code, not Stripe Dashboard. */
+  if (action === 'create-checkout') {
+    if (method !== 'POST') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
+    const productId = normalizeProductId(String(body.productId || body.product || q.product || ''))
+    if (!/^product-[1-4]$/.test(productId)) {
+      return json(res, 400, { ok: false, error: 'Invalid productId.' })
+    }
+    const catalog = await readCatalog()
+    const product = catalog.products.find((p) => p.id === productId)
+    if (!product) return json(res, 404, { ok: false, error: 'Product not found.' })
+    const created = await createCheckoutSessionForProduct(product)
+    if (!created.ok) return json(res, 502, { ok: false, error: created.error })
+    return json(res, 200, { ok: true, url: created.url, sessionId: created.sessionId })
+  }
+
   if (!isAuthed(req)) {
     return json(res, 401, { ok: false, error: 'Sign in required.' })
+  }
+
+  if (action === 'sync-redirects') {
+    if (method !== 'POST') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
+    const secret = stripeSecret()
+    if (!secret) return json(res, 503, { ok: false, error: 'Stripe secret is not configured.' })
+    const catalog = await readCatalog()
+    const results: Array<{ id: string; ok: boolean; paymentLinkId?: string; error?: string }> = []
+    for (const product of catalog.products) {
+      const synced = await syncPaymentLinkRedirect(secret, product)
+      if (synced.ok) results.push({ id: product.id, ok: true, paymentLinkId: synced.paymentLinkId })
+      else results.push({ id: product.id, ok: false, error: synced.error })
+    }
+    const allOk = results.every((r) => r.ok)
+    return json(res, allOk ? 200 : 207, {
+      ok: allOk,
+      thankYouUrl: THANK_YOU_SUCCESS,
+      results,
+    })
   }
 
   if (action === 'list') {
