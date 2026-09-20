@@ -144,8 +144,8 @@ export function buildKnowledge(): KnowledgeChunk[] {
     id: 'portal',
     title: portal.title,
     href: '#portal',
-    navLabel: 'Client portal',
-    keywords: ['portal', 'login', 'dashboard', 'track', 'progress', 'approve', 'designs', 'updates'],
+    navLabel: 'Site admin',
+    keywords: ['portal', 'login', 'dashboard', 'admin', 'pdf', 'blog', 'digital products'],
     text: `${portal.description}\n${portal.points.join('. ')}.`,
   })
 
