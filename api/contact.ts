@@ -164,8 +164,8 @@ async function sendViaMother(opts: {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Origin: 'https://youormeinnovations.com',
-      Referer: 'https://youormeinnovations.com/',
+      Origin: 'https://hometolive.net',
+      Referer: 'https://hometolive.net/',
     },
     body: params.toString(),
     signal: AbortSignal.timeout(15_000),
