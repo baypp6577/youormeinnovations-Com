@@ -191,9 +191,8 @@ function previewUrl(id: string) {
   return `/api/digital-products?action=download&product=${encodeURIComponent(id)}&preview=1`
 }
 
-function thankYouRedirect(n: number) {
-  return `https://youormeinnovations.com/thank-you?product=${n}&session_id={CHECKOUT_SESSION_ID}`
-}
+const thankYouRedirect =
+  'https://youormeinnovations.com/thank-you?session_id={CHECKOUT_SESSION_ID}'
 
 onMounted(() => {
   document.title = 'Digital Products | You Or Me Innovations'
@@ -258,8 +257,8 @@ onMounted(() => {
             </span>
           </p>
           <p class="mt-2">
-            Stripe After payment redirect example:
-            <code class="break-all text-xs text-yom-navy">{{ thankYouRedirect(1) }}</code>
+            Use this same After payment URL on <strong>all four</strong> Payment Links (product is detected from Stripe):
+            <code class="mt-1 block break-all text-xs text-yom-navy">{{ thankYouRedirect }}</code>
           </p>
         </div>
 

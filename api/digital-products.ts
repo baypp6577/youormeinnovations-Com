@@ -327,7 +327,42 @@ function isAuthed(req: Req) {
   return sessionOk(parseCookies(req)[COOKIE] || '')
 }
 
-async function verifyStripeSession(sessionId: string, productId: string): Promise<{ ok: boolean; error?: string }> {
+function normalizeProductId(raw: string): string {
+  const value = String(raw || '')
+    .trim()
+    .toLowerCase()
+  if (!value) return ''
+  const match = value.match(/^(?:product-?)?([1-4])$/)
+  if (match) return `product-${match[1]}`
+  return value
+}
+
+function normalizeBuyUrl(url: string): string {
+  return String(url || '')
+    .trim()
+    .replace(/\/$/, '')
+    .toLowerCase()
+}
+
+function parsePricePence(price: string): number | null {
+  const m = String(price || '').replace(/,/g, '').match(/(\d+(?:\.\d{1,2})?)/)
+  if (!m) return null
+  return Math.round(Number(m[1]) * 100)
+}
+
+async function stripeGet<T>(path: string, secret: string): Promise<T | null> {
+  const res = await fetch(`https://api.stripe.com/v1/${path}`, {
+    headers: { Authorization: `Bearer ${secret}` },
+  })
+  if (!res.ok) return null
+  return (await res.json()) as T
+}
+
+/** Resolve which ladder product a paid Checkout Session belongs to (metadata, Payment Link URL, or amount). */
+async function resolvePaidProductFromSession(
+  sessionId: string,
+  catalog: Catalog,
+): Promise<{ ok: true; productId: string } | { ok: false; error: string }> {
   const secret = stripeSecret()
   if (!secret) {
     return { ok: false, error: 'Download verification is not configured yet (Stripe secret).' }
@@ -336,26 +371,56 @@ async function verifyStripeSession(sessionId: string, productId: string): Promis
   if (!/^cs_[a-zA-Z0-9_]+$/.test(id)) {
     return { ok: false, error: 'Invalid checkout session.' }
   }
-  const res = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(id)}`, {
-    headers: { Authorization: `Bearer ${secret}` },
-  })
-  if (!res.ok) {
-    return { ok: false, error: 'Could not verify payment with Stripe.' }
-  }
-  const session = (await res.json()) as {
+
+  const session = await stripeGet<{
     payment_status?: string
     status?: string
     metadata?: Record<string, string>
     amount_total?: number
+    payment_link?: string | null
+  }>(`checkout/sessions/${encodeURIComponent(id)}`, secret)
+  if (!session) {
+    return { ok: false, error: 'Could not verify payment with Stripe.' }
   }
   if (session.payment_status !== 'paid' && session.status !== 'complete') {
     return { ok: false, error: 'Payment not completed.' }
   }
-  const metaProduct = String(session.metadata?.productId || session.metadata?.product || '').trim()
-  if (metaProduct && metaProduct !== productId && `product-${metaProduct}` !== productId) {
-    return { ok: false, error: 'Payment does not match this product.' }
+
+  const metaRaw = String(session.metadata?.productId || session.metadata?.product || '').trim()
+  const fromMeta = normalizeProductId(metaRaw)
+  if (fromMeta && catalog.products.some((p) => p.id === fromMeta)) {
+    return { ok: true, productId: fromMeta }
   }
-  return { ok: true }
+
+  const paymentLinkId = String(session.payment_link || '').trim()
+  if (paymentLinkId) {
+    const link = await stripeGet<{ url?: string; metadata?: Record<string, string> }>(
+      `payment_links/${encodeURIComponent(paymentLinkId)}`,
+      secret,
+    )
+    if (link) {
+      const linkMeta = normalizeProductId(String(link.metadata?.productId || link.metadata?.product || ''))
+      if (linkMeta && catalog.products.some((p) => p.id === linkMeta)) {
+        return { ok: true, productId: linkMeta }
+      }
+      const buyUrl = normalizeBuyUrl(String(link.url || ''))
+      if (buyUrl) {
+        const byUrl = catalog.products.find((p) => normalizeBuyUrl(p.paymentUrl) === buyUrl)
+        if (byUrl) return { ok: true, productId: byUrl.id }
+      }
+    }
+  }
+
+  const amount = typeof session.amount_total === 'number' ? session.amount_total : null
+  if (amount != null) {
+    const byAmount = catalog.products.filter((p) => parsePricePence(p.price) === amount)
+    if (byAmount.length === 1) return { ok: true, productId: byAmount[0].id }
+  }
+
+  return {
+    ok: false,
+    error: 'Could not match this payment to a product. Check Payment Link URLs in Digital Products admin.',
+  }
 }
 
 async function streamPdf(res: Res, pathname: string, fileName: string | null) {
@@ -434,26 +499,51 @@ export default async function handler(req: Req, res: Res) {
     return json(res, 200, { ok: true, products: catalog.products.map(publicProduct) })
   }
 
+  if (action === 'resolve-session') {
+    if (method !== 'GET') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
+    const sessionId = String(q.session_id || q.sessionId || '').trim()
+    const catalog = await readCatalog()
+    const resolved = await resolvePaidProductFromSession(sessionId, catalog)
+    if (!resolved.ok) {
+      return json(res, 403, { ok: false, error: resolved.error })
+    }
+    const product = catalog.products.find((p) => p.id === resolved.productId)
+    return json(res, 200, {
+      ok: true,
+      productId: resolved.productId,
+      hasPdf: Boolean(product?.blobPathname),
+      product: product ? publicProduct(product) : null,
+    })
+  }
+
   if (action === 'download') {
     if (method !== 'GET') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
-    const productId = String(q.product || '').trim()
-    if (!/^product-[1-4]$/.test(productId)) {
-      return json(res, 400, { ok: false, error: 'Invalid product.' })
-    }
     const catalog = await readCatalog()
-    const product = catalog.products.find((p) => p.id === productId)
-    if (!product?.blobPathname) {
-      return json(res, 404, { ok: false, error: 'No PDF uploaded for this product yet.' })
-    }
+    const claimed = normalizeProductId(String(q.product || '').trim())
 
     if (isAuthed(req) && q.preview === '1') {
-      return streamPdf(res, product.blobPathname, product.fileName)
+      if (!/^product-[1-4]$/.test(claimed)) {
+        return json(res, 400, { ok: false, error: 'Invalid product.' })
+      }
+      const previewProduct = catalog.products.find((p) => p.id === claimed)
+      if (!previewProduct?.blobPathname) {
+        return json(res, 404, { ok: false, error: 'No PDF uploaded for this product yet.' })
+      }
+      return streamPdf(res, previewProduct.blobPathname, previewProduct.fileName)
     }
 
     const sessionId = String(q.session_id || q.sessionId || '').trim()
-    const verified = await verifyStripeSession(sessionId, productId)
-    if (!verified.ok) {
-      return json(res, 403, { ok: false, error: verified.error || 'Not authorised.' })
+    const resolved = await resolvePaidProductFromSession(sessionId, catalog)
+    if (!resolved.ok) {
+      return json(res, 403, { ok: false, error: resolved.error || 'Not authorised.' })
+    }
+    if (claimed && claimed !== resolved.productId) {
+      return json(res, 403, { ok: false, error: 'Payment does not match this product.' })
+    }
+    const productId = resolved.productId
+    const product = catalog.products.find((p) => p.id === productId)
+    if (!product?.blobPathname) {
+      return json(res, 404, { ok: false, error: 'No PDF uploaded for this product yet.' })
     }
     return streamPdf(res, product.blobPathname, product.fileName)
   }

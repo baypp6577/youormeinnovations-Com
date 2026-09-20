@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { thankYou } from '@/data/site'
 
@@ -18,6 +18,9 @@ const route = useRoute()
 const ladder = ref(thankYou.upgrades.items.map((item) => ({ ...item, hasPdf: false } as PublicProduct)))
 const downloadError = ref('')
 const downloadBusy = ref(false)
+const resolveBusy = ref(false)
+const resolveError = ref('')
+const resolvedProductId = ref('')
 
 function normalizeProductId(raw: string): string {
   const value = raw.trim().toLowerCase()
@@ -27,8 +30,10 @@ function normalizeProductId(raw: string): string {
   return value
 }
 
-const purchasedId = computed(() => normalizeProductId(String(route.query.product || '')))
+const queryProductId = computed(() => normalizeProductId(String(route.query.product || '')))
 const sessionId = computed(() => String(route.query.session_id || route.query.sessionId || '').trim())
+
+const purchasedId = computed(() => resolvedProductId.value || queryProductId.value)
 
 const purchasedIndex = computed(() => ladder.value.findIndex((item) => item.id === purchasedId.value))
 
@@ -62,17 +67,61 @@ async function loadProducts() {
   }
 }
 
+async function resolveFromSession() {
+  resolveError.value = ''
+  resolvedProductId.value = ''
+  if (!sessionId.value) return
+  if (queryProductId.value) {
+    resolvedProductId.value = queryProductId.value
+    return
+  }
+  resolveBusy.value = true
+  try {
+    const res = await fetch(
+      `/api/digital-products?action=resolve-session&session_id=${encodeURIComponent(sessionId.value)}`,
+    )
+    const data = (await res.json()) as {
+      ok?: boolean
+      productId?: string
+      hasPdf?: boolean
+      error?: string
+      product?: PublicProduct | null
+    }
+    if (!res.ok || !data.ok || !data.productId) {
+      resolveError.value = data.error || 'Could not match this payment to a product.'
+      return
+    }
+    resolvedProductId.value = data.productId
+    if (data.product) {
+      const idx = ladder.value.findIndex((p) => p.id === data.productId)
+      if (idx >= 0) ladder.value[idx] = { ...ladder.value[idx], ...data.product, hasPdf: Boolean(data.hasPdf) }
+    }
+  } catch {
+    resolveError.value = 'Could not verify payment.'
+  } finally {
+    resolveBusy.value = false
+  }
+}
+
 function downloadHref() {
-  if (!purchasedId.value || !sessionId.value) return '#'
-  return `/api/digital-products?action=download&product=${encodeURIComponent(purchasedId.value)}&session_id=${encodeURIComponent(sessionId.value)}`
+  if (!sessionId.value) return '#'
+  const params = new URLSearchParams({
+    action: 'download',
+    session_id: sessionId.value,
+  })
+  if (purchasedId.value) params.set('product', purchasedId.value)
+  return `/api/digital-products?${params.toString()}`
 }
 
 async function downloadPdf() {
   downloadError.value = ''
-  if (!canDownload.value) {
-    downloadError.value = purchasedProduct.value?.hasPdf
-      ? 'Missing Stripe session — set After payment redirect to include session_id={CHECKOUT_SESSION_ID}.'
-      : 'PDF not uploaded yet for this product.'
+  if (!sessionId.value) {
+    downloadError.value =
+      'Missing Stripe session — set After payment redirect to include session_id={CHECKOUT_SESSION_ID}.'
+    return
+  }
+  if (!purchasedProduct.value?.hasPdf) {
+    downloadError.value = 'PDF not uploaded yet for this product.'
     return
   }
   downloadBusy.value = true
@@ -88,7 +137,7 @@ async function downloadPdf() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `${purchasedId.value}.pdf`
+    a.download = `${purchasedId.value || 'download'}.pdf`
     a.click()
     URL.revokeObjectURL(url)
   } catch {
@@ -98,9 +147,17 @@ async function downloadPdf() {
   }
 }
 
-onMounted(() => {
+watch(
+  () => [sessionId.value, queryProductId.value] as const,
+  () => {
+    void resolveFromSession()
+  },
+)
+
+onMounted(async () => {
   document.title = `${thankYou.title} | You Or Me Innovations`
-  void loadProducts()
+  await loadProducts()
+  await resolveFromSession()
 })
 </script>
 
@@ -127,20 +184,23 @@ onMounted(() => {
           {{ thankYou.note }}
         </p>
 
+        <p v-if="resolveBusy" class="mt-6 text-sm text-slate-300">Confirming your purchase…</p>
+        <p v-else-if="resolveError" class="mt-6 text-sm text-rose-200">{{ resolveError }}</p>
+
         <div v-if="purchasedProduct" class="mt-8">
           <button
             type="button"
             class="inline-flex rounded-full bg-yom-gold px-6 py-3 text-sm font-semibold text-yom-navy transition hover:bg-yom-gold-soft disabled:opacity-60"
-            :disabled="downloadBusy"
+            :disabled="downloadBusy || !canDownload"
             @click="downloadPdf"
           >
             {{ downloadBusy ? 'Preparing…' : 'Download your PDF' }}
           </button>
           <p v-if="downloadError" class="mt-3 text-sm text-rose-200">{{ downloadError }}</p>
           <p v-else-if="!sessionId" class="mt-3 text-xs text-slate-300">
-            If download fails, set Stripe After payment redirect to include
-            <code class="text-yom-gold-soft">session_id={'{'}CHECKOUT_SESSION_ID{'}'}</code>
-            and add the Stripe secret on Vercel.
+            If download fails, set Stripe After payment redirect to
+            <code class="text-yom-gold-soft">thank-you?session_id={'{'}CHECKOUT_SESSION_ID{'}'}</code>
+            on every Payment Link.
           </p>
         </div>
 
