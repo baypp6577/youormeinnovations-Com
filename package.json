@@ -15,7 +15,7 @@
     "@vercel/blob": "^2.8.0",
     "@vueuse/core": "^14.2.1",
     "d3": "^7.9.0",
-    "resend": "^6.20.0",
+    "nodemailer": "^7.0.6",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },
@@ -23,6 +23,7 @@
     "@tailwindcss/vite": "^4.3.1",
     "@types/d3": "^7.4.3",
     "@types/node": "^22.15.3",
+    "@types/nodemailer": "^7.0.1",
     "@vitejs/plugin-vue": "^6.0.4",
     "tailwindcss": "^4.3.1",
     "typescript": "~5.9.3",

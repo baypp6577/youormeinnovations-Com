@@ -1,7 +1,10 @@
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 
 const NOTIFY_EMAIL = (process.env.CONTACT_NOTIFY_EMAIL || 'yomiodeneye@hotmail.com').trim()
-const FROM_EMAIL = (process.env.FROM_EMAIL || 'You Or Me Innovations <no-reply@youormeinnovations.com>').trim()
+const FROM_EMAIL = (
+  process.env.FROM_EMAIL ||
+  'You Or Me Innovations <no-reply@youormeinnovations.com>'
+).trim()
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const MAX_PER_HOUR = 5
 const submissionsByIp = new Map<string, number[]>()
@@ -68,6 +71,30 @@ function isSpam(data: ContactBody) {
   return false
 }
 
+function smtpConfigured() {
+  return Boolean(
+    process.env.SMTP_HOST?.trim() &&
+      process.env.SMTP_USER?.trim() &&
+      process.env.SMTP_PASS?.trim(),
+  )
+}
+
+function createTransport() {
+  const port = Number(process.env.SMTP_PORT || 587)
+  const secureEnv = String(process.env.SMTP_SECURE || '').trim().toLowerCase()
+  const secure = secureEnv === 'true' || secureEnv === '1' || port === 465
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST!.trim(),
+    port,
+    secure,
+    auth: {
+      user: process.env.SMTP_USER!.trim(),
+      pass: process.env.SMTP_PASS!.trim(),
+    },
+  })
+}
+
 export default async function handler(
   req: { method?: string; body?: ContactBody; headers?: Record<string, string | string[] | undefined> },
   res: { status: (code: number) => { json: (body: unknown) => void } },
@@ -108,15 +135,14 @@ export default async function handler(
     return json(res, 400, { error: 'Subject or message is too short' })
   }
 
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
-    console.error('Contact form: RESEND_API_KEY is not configured')
+  if (!smtpConfigured()) {
+    console.error('Contact form: SMTP_HOST / SMTP_USER / SMTP_PASS are not configured')
     return json(res, 500, { error: 'An error occurred while processing your request' })
   }
 
   try {
-    const resend = new Resend(apiKey)
-    await resend.emails.send({
+    const transport = createTransport()
+    await transport.sendMail({
       from: FROM_EMAIL,
       to: NOTIFY_EMAIL,
       replyTo: email,
