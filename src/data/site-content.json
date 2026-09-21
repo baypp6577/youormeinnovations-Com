@@ -30,8 +30,7 @@
       { "label": "Community Engagement", "href": "#service-6" }
     ],
     "client": [
-      { "label": "Start Your Project", "href": "#contact-section", "contactSubject": "Start Your Project — Footer", "contactSource": "Footer client links" },
-      { "label": "Site admin", "href": "/y8m4k2n7", "external": false }
+      { "label": "Start Your Project", "href": "#contact-section", "contactSubject": "Start Your Project — Footer", "contactSource": "Footer client links" }
     ],
     "legal": [
       { "label": "Privacy Policy", "href": "#" },

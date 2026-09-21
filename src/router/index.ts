@@ -29,16 +29,19 @@ const router = createRouter({
       path: ADMIN_HUB_PATH,
       name: 'admin-hub',
       component: () => import('@/views/AdminHubView.vue'),
+      meta: { robots: 'noindex, nofollow' },
     },
     {
       path: BLOG_ADMIN_PATH,
       name: 'blog-admin',
       component: () => import('@/views/BlogAdminView.vue'),
+      meta: { robots: 'noindex, nofollow' },
     },
     {
       path: DIGITAL_PRODUCTS_ADMIN_PATH,
       name: 'digital-products-admin',
       component: () => import('@/views/DigitalProductsAdminView.vue'),
+      meta: { robots: 'noindex, nofollow' },
     },
   ],
   scrollBehavior(to) {

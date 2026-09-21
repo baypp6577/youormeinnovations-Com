@@ -7,7 +7,6 @@ import {
   contactSection,
   hero,
   packages,
-  portal,
   services,
   servicesDetail,
   workflow,
@@ -136,17 +135,8 @@ export function buildKnowledge(): KnowledgeChunk[] {
     title: workflow.title,
     href: '#workflow',
     navLabel: 'See our process',
-    keywords: ['process', 'workflow', 'steps', 'discover', 'strategise', 'create', 'launch', 'measure', 'portal'],
+    keywords: ['process', 'workflow', 'steps', 'discover', 'strategise', 'create', 'launch', 'measure'],
     text: [workflow.description, ...workflow.steps.map((step) => `${step.label}: ${step.description}${step.detail ? ` ${step.detail}` : ''}`)].join('\n'),
-  })
-
-  chunks.push({
-    id: 'portal',
-    title: portal.title,
-    href: '#portal',
-    navLabel: 'Site admin',
-    keywords: ['portal', 'login', 'dashboard', 'admin', 'pdf', 'blog', 'digital products'],
-    text: `${portal.description}\n${portal.points.join('. ')}.`,
   })
 
   chunks.push({
@@ -269,13 +259,6 @@ export function answerQuestion(userInput: string): AssistantReply {
         )
         .join('\n\n')}`,
       navigation: { url: '#packages', label: 'View PR packages' },
-    }
-  }
-
-  if (/\b(portal|login|dashboard|admin|pdf upload|digital products)\b/.test(q)) {
-    return {
-      text: `${portal.title}\n\n${portal.description}\n\n${portal.points.join(' · ')}\n\nOpen Site admin on this website to manage PDFs and blog posts.`,
-      navigation: { url: '#portal', label: 'See site admin' },
     }
   }
 

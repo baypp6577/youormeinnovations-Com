@@ -25,15 +25,28 @@ const hidePublicChrome = computed(
   () => isAdminUiPath(route.path) || (route.path === '/' && homepageDisabled.value)
 )
 
+function applyRobotsMeta() {
+  const noIndex = isAdminUiPath(route.path) || String(route.meta.robots || '').includes('noindex')
+  let el = document.querySelector('meta[name="robots"]')
+  if (!el) {
+    el = document.createElement('meta')
+    el.setAttribute('name', 'robots')
+    document.head.appendChild(el)
+  }
+  el.setAttribute('content', noIndex ? 'noindex, nofollow' : 'index, follow')
+}
+
 onMounted(() => {
   bindContactHashClicks()
   void checkHosting()
+  applyRobotsMeta()
 })
 
 watch(
   () => route.path,
   () => {
     void checkHosting()
+    applyRobotsMeta()
   }
 )
 </script>

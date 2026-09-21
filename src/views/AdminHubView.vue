@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { BLOG_ADMIN_PATH, DIGITAL_PRODUCTS_ADMIN_PATH } from '@/lib/adminPaths'
+import { portal } from '@/data/site'
 </script>
 
 <template>
@@ -9,9 +10,17 @@ import { BLOG_ADMIN_PATH, DIGITAL_PRODUCTS_ADMIN_PATH } from '@/lib/adminPaths'
       <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-blue">You Or Me · Site admin</p>
       <h1 class="mt-2 font-display text-3xl font-bold text-yom-navy sm:text-4xl">Admin</h1>
       <p class="mt-3 text-slate-600">
-        Sign in here to manage your website — not the HomeToLive project board. Use the same site admin password for
-        both tools.
+        {{ portal.description }}
       </p>
+      <ul class="mt-6 grid gap-3 sm:grid-cols-2">
+        <li
+          v-for="point in portal.points"
+          :key="point"
+          class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-yom-navy"
+        >
+          {{ point }}
+        </li>
+      </ul>
 
       <div class="mt-10 grid gap-4 sm:grid-cols-2">
         <RouterLink
