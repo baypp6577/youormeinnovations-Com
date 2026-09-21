@@ -583,10 +583,7 @@ async function createCheckoutSessionForProduct(
   // Lead capture: name + billing address (customer asked for FREE leads this way).
   params.set('billing_address_collection', 'required')
   params.set('customer_creation', 'if_required')
-
-  if (free) {
-    params.set('payment_method_collection', 'if_required')
-  }
+  // Do not set payment_method_collection — Stripe only allows that for recurring/subscription prices.
 
   let usedPaymentLink = false
   if (product.paymentUrl) {
