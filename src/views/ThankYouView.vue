@@ -82,15 +82,17 @@ async function resolveFromSession() {
     const res = await fetch(
       `/api/digital-products?action=resolve-session&session_id=${encodeURIComponent(sessionId.value)}`,
     )
-    const data = (await res.json()) as {
+    const data = (await res.json().catch(() => null)) as {
       ok?: boolean
       productId?: string
       hasPdf?: boolean
       error?: string
       product?: PublicProduct | null
-    }
-    if (!res.ok || !data.ok || !data.productId) {
-      resolveError.value = data.error || 'Could not match this payment to a product.'
+    } | null
+    if (!res.ok || !data?.ok || !data.productId) {
+      resolveError.value =
+        data?.error ||
+        (res.status >= 500 ? 'Download service is restarting. Wait a minute and refresh.' : 'Could not match this payment to a product.')
       return
     }
     resolvedProductId.value = data.productId
