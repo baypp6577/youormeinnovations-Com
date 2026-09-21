@@ -12,6 +12,10 @@ type PublicProduct = {
   paymentUrl: string
 }
 
+/** Shared primary CTA classes — same gold pill as hero / about / header. */
+const primaryCtaClass =
+  'mt-auto inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-5 py-3 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/20 transition hover:brightness-105'
+
 const items = ref<PackageItem[]>(packages.items.map((item) => ({ ...item })))
 
 onMounted(async () => {
@@ -46,7 +50,7 @@ onMounted(async () => {
         <article
           v-for="item in items"
           :key="item.id"
-          class="rounded-3xl border border-slate-200/80 bg-yom-surface p-8 shadow-xl shadow-slate-200/40"
+          class="flex flex-col rounded-3xl border border-slate-200/80 bg-yom-surface p-8 shadow-xl shadow-slate-200/40"
         >
           <p class="text-sm font-semibold uppercase tracking-[0.2em] text-yom-blue">{{ item.name }}</p>
           <div class="mt-4 flex flex-wrap items-end gap-3">
@@ -60,7 +64,7 @@ onMounted(async () => {
           <a
             v-if="item.paymentUrl"
             :href="item.paymentUrl"
-            class="mt-5 inline-block text-sm font-semibold text-yom-blue transition hover:text-yom-navy"
+            :class="primaryCtaClass"
           >
             {{ item.cta }}
           </a>

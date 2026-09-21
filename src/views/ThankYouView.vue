@@ -280,7 +280,7 @@ onMounted(async () => {
         <p v-if="checkoutError" class="mt-4 text-sm text-rose-600">{{ checkoutError }}</p>
         <button
           type="button"
-          class="mt-8 inline-flex rounded-full bg-yom-blue px-6 py-3 text-sm font-semibold text-white transition hover:bg-yom-navy disabled:opacity-60"
+          class="mt-8 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-6 py-3 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/20 transition hover:brightness-105 disabled:opacity-60 sm:w-auto"
           :disabled="checkoutBusy"
           @click="startCheckout(nextUpgrade.id)"
         >
