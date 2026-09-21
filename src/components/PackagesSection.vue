@@ -20,6 +20,14 @@ const items = ref<PackageItem[]>(packages.items.map((item) => ({ ...item })))
 const busyId = ref('')
 const checkoutError = ref('')
 
+function isFreePrice(price: string): boolean {
+  const raw = String(price || '')
+    .trim()
+    .toLowerCase()
+    .replace(/,/g, '')
+  return raw === 'free' || raw === '£0' || raw === '£0.00' || raw === '0' || raw === '0.00'
+}
+
 onMounted(async () => {
   try {
     const res = await fetch('/api/digital-products?action=public-list')
@@ -42,6 +50,13 @@ onMounted(async () => {
 async function startCheckout(item: PackageItem) {
   checkoutError.value = ''
   if (!item.id) return
+
+  // FREE: use the live Payment Link directly (works once the link is active in Stripe).
+  if (isFreePrice(item.price) && item.paymentUrl) {
+    window.location.href = item.paymentUrl
+    return
+  }
+
   busyId.value = item.id
   try {
     const res = await fetch('/api/digital-products?action=create-checkout', {
