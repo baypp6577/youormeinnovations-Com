@@ -1,5 +1,11 @@
 import crypto from 'crypto'
 import { put, get, del } from '@vercel/blob'
+import {
+  collectStripeSecrets,
+  secretForCheckoutWrites,
+  secretsForSession,
+  stripeSecretMode,
+} from './_lib/stripe-keys'
 
 const COOKIE = 'yom_dp_sess'
 const CATALOG_PATH = 'digital-products/catalog.json'
@@ -58,7 +64,20 @@ function blobToken(): string {
 }
 
 function stripeSecret(): string {
-  return env('STRIPE_SECRET_KEY') || env('YOUORME_STRIPE_SECRET_KEY')
+  return secretForCheckoutWrites()
+}
+
+function stripeSecretsList(): string[] {
+  return collectStripeSecrets()
+}
+
+function stripeStatus() {
+  const secrets = stripeSecretsList()
+  return {
+    stripeConfigured: secrets.length > 0,
+    stripeTestConfigured: secrets.some((secret) => stripeSecretMode(secret) === 'test'),
+    stripeLiveConfigured: secrets.some((secret) => stripeSecretMode(secret) === 'live'),
+  }
 }
 
 function json(res: Res, status: number, body: unknown) {
@@ -354,12 +373,20 @@ const THANK_YOU_SUCCESS =
   'https://youormeinnovations.com/thank-you?session_id={CHECKOUT_SESSION_ID}'
 const CHECKOUT_CANCEL = 'https://youormeinnovations.com/'
 
-async function stripeGet<T>(path: string, secret: string): Promise<T | null> {
+async function stripeGetRaw<T>(
+  path: string,
+  secret: string,
+): Promise<{ ok: true; data: T } | { ok: false; status: number }> {
   const res = await fetch(`https://api.stripe.com/v1/${path}`, {
     headers: { Authorization: `Bearer ${secret}` },
   })
-  if (!res.ok) return null
-  return (await res.json()) as T
+  if (!res.ok) return { ok: false, status: res.status }
+  return { ok: true, data: (await res.json()) as T }
+}
+
+async function stripeGet<T>(path: string, secret: string): Promise<T | null> {
+  const result = await stripeGetRaw<T>(path, secret)
+  return result.ok ? result.data : null
 }
 
 async function stripeForm<T>(
@@ -511,25 +538,55 @@ async function resolvePaidProductFromSession(
   sessionId: string,
   catalog: Catalog,
 ): Promise<{ ok: true; productId: string } | { ok: false; error: string }> {
-  const secret = stripeSecret()
-  if (!secret) {
-    return { ok: false, error: 'Download verification is not configured yet (Stripe secret).' }
-  }
   const id = String(sessionId || '').trim()
   if (!/^cs_[a-zA-Z0-9_]+$/.test(id)) {
     return { ok: false, error: 'Invalid checkout session.' }
   }
 
-  const session = await stripeGet<{
+  const picked = secretsForSession(id, stripeSecretsList())
+  if (!picked.secrets.length) {
+    return { ok: false, error: picked.error || 'Stripe secret is not configured.' }
+  }
+
+  type StripeSession = {
     payment_status?: string
     status?: string
     metadata?: Record<string, string>
     amount_total?: number
     payment_link?: string | null
-  }>(`checkout/sessions/${encodeURIComponent(id)}`, secret)
-  if (!session) {
+  }
+
+  let session: StripeSession | null = null
+  let secretUsed = ''
+  let lastStatus = 0
+  for (const secret of picked.secrets) {
+    const got = await stripeGetRaw<StripeSession>(
+      `checkout/sessions/${encodeURIComponent(id)}`,
+      secret,
+    )
+    if (got.ok) {
+      session = got.data
+      secretUsed = secret
+      break
+    }
+    lastStatus = got.status
+  }
+
+  if (!session || !secretUsed) {
+    if (picked.error) return { ok: false, error: picked.error }
+    if (lastStatus === 401 || lastStatus === 403) {
+      return { ok: false, error: 'Stripe key cannot read Checkout Sessions. Check the secret on Vercel.' }
+    }
+    if (picked.mode === 'test') {
+      return {
+        ok: false,
+        error:
+          'Could not find this test checkout in Stripe. Use the test-mode secret (sk_test_...) for the same Stripe account.',
+      }
+    }
     return { ok: false, error: 'Could not verify payment with Stripe.' }
   }
+
   if (session.payment_status !== 'paid' && session.status !== 'complete') {
     return { ok: false, error: 'Payment not completed.' }
   }
@@ -544,7 +601,7 @@ async function resolvePaidProductFromSession(
   if (paymentLinkId) {
     const link = await stripeGet<{ url?: string; metadata?: Record<string, string> }>(
       `payment_links/${encodeURIComponent(paymentLinkId)}`,
-      secret,
+      secretUsed,
     )
     if (link) {
       const linkMeta = normalizeProductId(String(link.metadata?.productId || link.metadata?.product || ''))
@@ -619,7 +676,7 @@ export default async function handler(req: Req, res: Res) {
       ok: true,
       authed: isAuthed(req),
       blobConfigured: Boolean(blobToken()),
-      stripeConfigured: Boolean(stripeSecret()),
+      ...stripeStatus(),
     })
   }
 
@@ -649,7 +706,7 @@ export default async function handler(req: Req, res: Res) {
 
   if (action === 'resolve-session') {
     if (method !== 'GET') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
-    const sessionId = String(q.session_id || q.sessionId || '').trim()
+    const sessionId = String(q.session_id || q.sessionId || q.checkout_session_id || '').trim()
     const catalog = await readCatalog()
     const resolved = await resolvePaidProductFromSession(sessionId, catalog)
     if (!resolved.ok) {
@@ -680,7 +737,7 @@ export default async function handler(req: Req, res: Res) {
       return streamPdf(res, previewProduct.blobPathname, previewProduct.fileName)
     }
 
-    const sessionId = String(q.session_id || q.sessionId || '').trim()
+    const sessionId = String(q.session_id || q.sessionId || q.checkout_session_id || '').trim()
     const resolved = await resolvePaidProductFromSession(sessionId, catalog)
     if (!resolved.ok) {
       return json(res, 403, { ok: false, error: resolved.error || 'Not authorised.' })
@@ -717,14 +774,26 @@ export default async function handler(req: Req, res: Res) {
 
   if (action === 'sync-redirects') {
     if (method !== 'POST') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
-    const secret = stripeSecret()
-    if (!secret) return json(res, 503, { ok: false, error: 'Stripe secret is not configured.' })
+    const secrets = stripeSecretsList()
+    if (!secrets.length) return json(res, 503, { ok: false, error: 'Stripe secret is not configured.' })
     const catalog = await readCatalog()
     const results: Array<{ id: string; ok: boolean; paymentLinkId?: string; error?: string }> = []
     for (const product of catalog.products) {
-      const synced = await syncPaymentLinkRedirect(secret, product)
-      if (synced.ok) results.push({ id: product.id, ok: true, paymentLinkId: synced.paymentLinkId })
-      else results.push({ id: product.id, ok: false, error: synced.error })
+      let lastError = 'Could not find this Payment Link in Stripe.'
+      let saved:
+        | { ok: true; paymentLinkId: string }
+        | { ok: false; error: string }
+        | null = null
+      for (const secret of secrets) {
+        const synced = await syncPaymentLinkRedirect(secret, product)
+        if (synced.ok) {
+          saved = synced
+          break
+        }
+        lastError = synced.error
+      }
+      if (saved?.ok) results.push({ id: product.id, ok: true, paymentLinkId: saved.paymentLinkId })
+      else results.push({ id: product.id, ok: false, error: lastError })
     }
     const allOk = results.every((r) => r.ok)
     return json(res, allOk ? 200 : 207, {
@@ -741,7 +810,7 @@ export default async function handler(req: Req, res: Res) {
       ok: true,
       products: catalog.products,
       blobConfigured: Boolean(blobToken()),
-      stripeConfigured: Boolean(stripeSecret()),
+      ...stripeStatus(),
     })
   }
 

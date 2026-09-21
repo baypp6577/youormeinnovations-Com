@@ -26,6 +26,8 @@ const products = ref<Product[]>([])
 const selectedId = ref('product-1')
 const blobConfigured = ref(false)
 const stripeConfigured = ref(false)
+const stripeTestConfigured = ref(false)
+const stripeLiveConfigured = ref(false)
 const form = ref(emptyForm())
 
 function emptyForm() {
@@ -61,6 +63,8 @@ async function api(action: string, payload: Record<string, unknown> = {}, method
     product?: Product
     blobConfigured?: boolean
     stripeConfigured?: boolean
+    stripeTestConfigured?: boolean
+    stripeLiveConfigured?: boolean
     results?: Array<{ id: string; ok: boolean; error?: string; paymentLinkId?: string }>
   }
   return { status: res.status, data }
@@ -86,6 +90,8 @@ async function refreshSession() {
     authed.value = Boolean(data.authed)
     blobConfigured.value = Boolean(data.blobConfigured)
     stripeConfigured.value = Boolean(data.stripeConfigured)
+    stripeTestConfigured.value = Boolean(data.stripeTestConfigured)
+    stripeLiveConfigured.value = Boolean(data.stripeLiveConfigured)
     if (authed.value) await loadProducts()
   } catch {
     authed.value = false
@@ -100,6 +106,8 @@ async function loadProducts() {
     products.value = data.products
     blobConfigured.value = Boolean(data.blobConfigured)
     stripeConfigured.value = Boolean(data.stripeConfigured)
+    stripeTestConfigured.value = Boolean(data.stripeTestConfigured)
+    stripeLiveConfigured.value = Boolean(data.stripeLiveConfigured)
     const current = data.products.find((p) => p.id === selectedId.value) || data.products[0]
     if (current) selectProduct(current)
   }
@@ -274,9 +282,13 @@ onMounted(() => {
             <span :class="blobConfigured ? 'text-emerald-700' : 'text-amber-700'">
               {{ blobConfigured ? 'configured' : 'missing BLOB_READ_WRITE_TOKEN' }}
             </span>
-            · Stripe verify:
-            <span :class="stripeConfigured ? 'text-emerald-700' : 'text-amber-700'">
-              {{ stripeConfigured ? 'configured' : 'add YOUORME_STRIPE_SECRET_KEY for buyer downloads' }}
+            · Stripe live:
+            <span :class="stripeLiveConfigured ? 'text-emerald-700' : 'text-amber-700'">
+              {{ stripeLiveConfigured ? 'ok' : 'missing sk_live_' }}
+            </span>
+            · Stripe test:
+            <span :class="stripeTestConfigured ? 'text-emerald-700' : 'text-amber-700'">
+              {{ stripeTestConfigured ? 'ok' : 'add STRIPE_SECRET_KEY_TEST for test-mode downloads' }}
             </span>
           </p>
           <p class="mt-2">

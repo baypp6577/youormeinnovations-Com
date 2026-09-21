@@ -31,7 +31,9 @@ function normalizeProductId(raw: string): string {
 }
 
 const queryProductId = computed(() => normalizeProductId(String(route.query.product || '')))
-const sessionId = computed(() => String(route.query.session_id || route.query.sessionId || '').trim())
+const sessionId = computed(() =>
+  String(route.query.session_id || route.query.sessionId || route.query.checkout_session_id || '').trim(),
+)
 
 const purchasedId = computed(() => resolvedProductId.value || queryProductId.value)
 
