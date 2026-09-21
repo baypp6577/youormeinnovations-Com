@@ -14,19 +14,11 @@ type PublicProduct = {
 
 /** Shared primary CTA classes — same gold pill as hero / about / header. */
 const primaryCtaClass =
-  'mt-auto inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-5 py-3 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-70'
+  'mt-8 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-6 py-3.5 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-70'
 
 const items = ref<PackageItem[]>(packages.items.map((item) => ({ ...item })))
 const busyId = ref('')
 const checkoutError = ref('')
-
-function isFreePrice(price: string): boolean {
-  const raw = String(price || '')
-    .trim()
-    .toLowerCase()
-    .replace(/,/g, '')
-  return raw === 'free' || raw === '£0' || raw === '£0.00' || raw === '0' || raw === '0.00'
-}
 
 onMounted(async () => {
   try {
@@ -50,12 +42,6 @@ onMounted(async () => {
 async function startCheckout(item: PackageItem) {
   checkoutError.value = ''
   if (!item.id) return
-
-  if (isFreePrice(item.price)) {
-    window.location.href = `/thank-you?product=${encodeURIComponent(item.id)}&free=1`
-    return
-  }
-
   busyId.value = item.id
   try {
     const res = await fetch('/api/digital-products?action=create-checkout', {
@@ -98,24 +84,21 @@ async function startCheckout(item: PackageItem) {
             <p class="font-display text-4xl font-bold text-yom-navy">{{ item.price }}</p>
             <p class="pb-1 text-sm text-slate-500">{{ item.tagline }}</p>
           </div>
-          <p class="mt-4 text-sm leading-relaxed text-slate-600">{{ item.description }}</p>
+          <p class="mt-4 flex-1 text-sm leading-relaxed text-slate-600">{{ item.description }}</p>
           <p v-if="item.idealFor" class="mt-4 text-sm font-medium text-slate-700">
             Ideal for: {{ item.idealFor }}
           </p>
-          <button
-            type="button"
-            :class="primaryCtaClass"
-            :disabled="busyId === item.id"
-            @click="startCheckout(item)"
-          >
-            {{
-              busyId === item.id
-                ? 'Opening checkout…'
-                : isFreePrice(item.price)
-                  ? item.cta || 'Download free'
-                  : item.cta
-            }}
-          </button>
+          <div class="mt-8 border-t border-slate-200/80 pt-6">
+            <button
+              type="button"
+              :class="primaryCtaClass"
+              class="!mt-0"
+              :disabled="busyId === item.id"
+              @click="startCheckout(item)"
+            >
+              {{ busyId === item.id ? 'Opening checkout…' : item.cta }}
+            </button>
+          </div>
         </article>
       </div>
     </div>

@@ -349,7 +349,14 @@ function normalizeCatalog(raw: unknown): Catalog {
   const byId = new Map(mapped.map((p) => [p.id, p]))
   const base = defaultCatalog().products
   return {
-    products: base.map((seed) => byId.get(seed.id) || seed),
+    products: base.map((seed) => {
+      const row = byId.get(seed.id) || seed
+      // Retire broken FREE Payment Link so live lead-capture link is used.
+      if (row.id === 'product-1' && row.paymentUrl.includes('aFa9AT48K1Jif2F3gq2sM03')) {
+        return { ...row, paymentUrl: seed.paymentUrl }
+      }
+      return row
+    }),
   }
 }
 
@@ -564,39 +571,57 @@ async function paymentLinkPriceIds(
 async function createCheckoutSessionForProduct(
   product: DigitalProduct,
 ): Promise<{ ok: true; url: string; sessionId: string } | { ok: false; error: string }> {
-  if (isFreeProduct(product)) {
-    return {
-      ok: false,
-      error: 'This product is free — use the free download page instead of Stripe.',
-    }
-  }
-
   const secret = stripeSecret()
   if (!secret) return { ok: false, error: 'Stripe secret is not configured.' }
-  if (!product.paymentUrl) return { ok: false, error: 'Product has no Payment Link URL.' }
 
-  const plink = await findPaymentLinkByBuyUrl(secret, product.paymentUrl)
-  if (!plink?.id) {
-    return {
-      ok: false,
-      error: 'Could not find that buy.stripe.com Payment Link in Stripe. Check the URL in admin.',
-    }
-  }
-  const lineItems = await paymentLinkPriceIds(secret, plink.id)
-  if (!lineItems.length) {
-    return { ok: false, error: 'Payment Link has no prices/line items.' }
-  }
-
+  const free = isFreeProduct(product)
   const params = new URLSearchParams()
   params.set('mode', 'payment')
   params.set('success_url', thankYouUrl(product.id))
   params.set('cancel_url', CHECKOUT_CANCEL)
   params.set('metadata[productId]', product.id)
-  params.set('payment_intent_data[metadata][productId]', product.id)
-  lineItems.forEach((item, i) => {
-    params.set(`line_items[${i}][price]`, item.price)
-    params.set(`line_items[${i}][quantity]`, String(item.quantity))
-  })
+  // Lead capture: name + billing address (customer asked for FREE leads this way).
+  params.set('billing_address_collection', 'required')
+  params.set('customer_creation', 'if_required')
+
+  if (free) {
+    params.set('payment_method_collection', 'if_required')
+  }
+
+  let usedPaymentLink = false
+  if (product.paymentUrl) {
+    const plink = await findPaymentLinkByBuyUrl(secret, product.paymentUrl)
+    if (plink?.id) {
+      const lineItems = await paymentLinkPriceIds(secret, plink.id)
+      if (lineItems.length) {
+        usedPaymentLink = true
+        if (!free) {
+          params.set('payment_intent_data[metadata][productId]', product.id)
+        }
+        lineItems.forEach((item, i) => {
+          params.set(`line_items[${i}][price]`, item.price)
+          params.set(`line_items[${i}][quantity]`, String(item.quantity))
+        })
+      }
+    }
+  }
+
+  if (!usedPaymentLink) {
+    if (!free) {
+      return {
+        ok: false,
+        error: 'Could not find that buy.stripe.com Payment Link in Stripe. Check the URL in admin.',
+      }
+    }
+    // FREE fallback: £0 line item so checkout still collects name + address as a lead.
+    params.set('line_items[0][price_data][currency]', 'gbp')
+    params.set('line_items[0][price_data][unit_amount]', '0')
+    params.set(
+      'line_items[0][price_data][product_data][name]',
+      product.name.slice(0, 120) || 'Free download',
+    )
+    params.set('line_items[0][quantity]', '1')
+  }
 
   const created = await stripeForm<{ id?: string; url?: string }>(
     'checkout/sessions',
