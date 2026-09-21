@@ -73,15 +73,14 @@ async function resolveFromSession() {
   resolveError.value = ''
   resolvedProductId.value = ''
   if (!sessionId.value) return
-  if (queryProductId.value) {
-    resolvedProductId.value = queryProductId.value
-    return
-  }
   resolveBusy.value = true
   try {
-    const res = await fetch(
-      `/api/digital-products?action=resolve-session&session_id=${encodeURIComponent(sessionId.value)}`,
-    )
+    const params = new URLSearchParams({
+      action: 'resolve-session',
+      session_id: sessionId.value,
+    })
+    if (queryProductId.value) params.set('product', queryProductId.value)
+    const res = await fetch(`/api/digital-products?${params.toString()}`)
     const data = (await res.json().catch(() => null)) as {
       ok?: boolean
       productId?: string

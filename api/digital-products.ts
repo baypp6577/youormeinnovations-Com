@@ -428,9 +428,16 @@ function normalizeBuyUrl(url: string): string {
 }
 
 function parsePricePence(price: string): number | null {
-  const m = String(price || '').replace(/,/g, '').match(/(\d+(?:\.\d{1,2})?)/)
+  const raw = String(price || '').trim().toLowerCase().replace(/,/g, '')
+  if (!raw) return null
+  if (raw === 'free' || raw === '£0' || raw === '£0.00' || raw === '0' || raw === '0.00') return 0
+  const m = raw.match(/(\d+(?:\.\d{1,2})?)/)
   if (!m) return null
   return Math.round(Number(m[1]) * 100)
+}
+
+function thankYouUrl(productId: string): string {
+  return `https://youormeinnovations.com/thank-you?session_id={CHECKOUT_SESSION_ID}&product=${encodeURIComponent(productId)}`
 }
 
 const THANK_YOU_SUCCESS =
@@ -556,7 +563,7 @@ async function createCheckoutSessionForProduct(
 
   const params = new URLSearchParams()
   params.set('mode', 'payment')
-  params.set('success_url', THANK_YOU_SUCCESS)
+  params.set('success_url', thankYouUrl(product.id))
   params.set('cancel_url', CHECKOUT_CANCEL)
   params.set('metadata[productId]', product.id)
   params.set('payment_intent_data[metadata][productId]', product.id)
@@ -586,7 +593,7 @@ async function syncPaymentLinkRedirect(
   if (!plink?.id) return { ok: false, error: `No Payment Link for ${product.id}` }
   const params = new URLSearchParams()
   params.set('after_completion[type]', 'redirect')
-  params.set('after_completion[redirect][url]', THANK_YOU_SUCCESS)
+  params.set('after_completion[redirect][url]', thankYouUrl(product.id))
   params.set('metadata[productId]', product.id)
   const updated = await stripeForm<{ id?: string }>(
     `payment_links/${encodeURIComponent(plink.id)}`,
@@ -601,6 +608,7 @@ async function syncPaymentLinkRedirect(
 async function resolvePaidProductFromSession(
   sessionId: string,
   catalog: Catalog,
+  claimedProductId = '',
 ): Promise<{ ok: true; productId: string } | { ok: false; error: string }> {
   const id = String(sessionId || '').trim()
   if (!/^cs_[a-zA-Z0-9_]+$/.test(id)) {
@@ -617,7 +625,13 @@ async function resolvePaidProductFromSession(
     status?: string
     metadata?: Record<string, string>
     amount_total?: number
-    payment_link?: string | null
+    payment_link?: string | { id?: string; url?: string; metadata?: Record<string, string> } | null
+    line_items?: {
+      data?: Array<{
+        amount_total?: number
+        price?: { id?: string; unit_amount?: number | null } | string
+      }>
+    }
   }
 
   let session: StripeSession | null = null
@@ -625,7 +639,7 @@ async function resolvePaidProductFromSession(
   let lastStatus = 0
   for (const secret of picked.secrets) {
     const got = await stripeGetRaw<StripeSession>(
-      `checkout/sessions/${encodeURIComponent(id)}`,
+      `checkout/sessions/${encodeURIComponent(id)}?expand[]=line_items`,
       secret,
     )
     if (got.ok) {
@@ -655,13 +669,20 @@ async function resolvePaidProductFromSession(
     return { ok: false, error: 'Payment not completed.' }
   }
 
+  const claimed = normalizeProductId(claimedProductId)
+  const inCatalog = (productId: string) => catalog.products.some((p) => p.id === productId)
+
   const metaRaw = String(session.metadata?.productId || session.metadata?.product || '').trim()
   const fromMeta = normalizeProductId(metaRaw)
-  if (fromMeta && catalog.products.some((p) => p.id === fromMeta)) {
+  if (fromMeta && inCatalog(fromMeta)) {
     return { ok: true, productId: fromMeta }
   }
 
-  const paymentLinkId = String(session.payment_link || '').trim()
+  const paymentLinkRef = session.payment_link
+  const paymentLinkId =
+    typeof paymentLinkRef === 'string'
+      ? paymentLinkRef.trim()
+      : String(paymentLinkRef?.id || '').trim()
   if (paymentLinkId) {
     const link = await stripeGet<{ url?: string; metadata?: Record<string, string> }>(
       `payment_links/${encodeURIComponent(paymentLinkId)}`,
@@ -669,7 +690,7 @@ async function resolvePaidProductFromSession(
     )
     if (link) {
       const linkMeta = normalizeProductId(String(link.metadata?.productId || link.metadata?.product || ''))
-      if (linkMeta && catalog.products.some((p) => p.id === linkMeta)) {
+      if (linkMeta && inCatalog(linkMeta)) {
         return { ok: true, productId: linkMeta }
       }
       const buyUrl = normalizeBuyUrl(String(link.url || ''))
@@ -680,10 +701,33 @@ async function resolvePaidProductFromSession(
     }
   }
 
-  const amount = typeof session.amount_total === 'number' ? session.amount_total : null
+  const line = session.line_items?.data?.[0]
+  const linePrice = line?.price && typeof line.price === 'object' ? line.price : null
+  const unitAmount = typeof linePrice?.unit_amount === 'number' ? linePrice.unit_amount : null
+  if (unitAmount != null) {
+    const byUnit = catalog.products.filter((p) => parsePricePence(p.price) === unitAmount)
+    if (byUnit.length === 1) return { ok: true, productId: byUnit[0].id }
+  }
+
+  const amount = typeof session.amount_total === 'number' ? session.amount_total : unitAmount
   if (amount != null) {
     const byAmount = catalog.products.filter((p) => parsePricePence(p.price) === amount)
     if (byAmount.length === 1) return { ok: true, productId: byAmount[0].id }
+  }
+
+  if (claimed && inCatalog(claimed)) {
+    const claimedPence = parsePricePence(catalog.products.find((p) => p.id === claimed)?.price || '')
+    if (claimedPence != null && (unitAmount === claimedPence || amount === claimedPence)) {
+      return { ok: true, productId: claimed }
+    }
+    if (claimedPence === 0 && (unitAmount == null || unitAmount === 0) && (amount == null || amount === 0)) {
+      return { ok: true, productId: claimed }
+    }
+  }
+
+  const freeProducts = catalog.products.filter((p) => parsePricePence(p.price) === 0)
+  if (freeProducts.length === 1 && (amount === 0 || unitAmount === 0)) {
+    return { ok: true, productId: freeProducts[0].id }
   }
 
   return {
@@ -781,7 +825,8 @@ async function handleDigitalProducts(req: Req, res: Res) {
     if (method !== 'GET') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
     const sessionId = String(q.session_id || q.sessionId || q.checkout_session_id || '').trim()
     const catalog = await readCatalog()
-    const resolved = await resolvePaidProductFromSession(sessionId, catalog)
+    const claimed = normalizeProductId(String(q.product || '').trim())
+    const resolved = await resolvePaidProductFromSession(sessionId, catalog, claimed)
     if (!resolved.ok) {
       return json(res, 403, { ok: false, error: resolved.error })
     }
@@ -811,7 +856,7 @@ async function handleDigitalProducts(req: Req, res: Res) {
     }
 
     const sessionId = String(q.session_id || q.sessionId || q.checkout_session_id || '').trim()
-    const resolved = await resolvePaidProductFromSession(sessionId, catalog)
+    const resolved = await resolvePaidProductFromSession(sessionId, catalog, claimed)
     if (!resolved.ok) {
       return json(res, 403, { ok: false, error: resolved.error || 'Not authorised.' })
     }
