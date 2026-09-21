@@ -6,8 +6,11 @@ const CATALOG_PATH = 'digital-products/catalog.json'
 const SESSION_HOURS = 12
 const LOGIN_MAX = 5
 const LOGIN_WINDOW_MS = 15 * 60 * 1000
+const FREE_DL_MAX = 30
+const FREE_DL_WINDOW_MS = 15 * 60 * 1000
 const MAX_PDF_BYTES = 4 * 1024 * 1024
 const loginsByIp = new Map<string, number[]>()
+const freeDownloadsByIp = new Map<string, number[]>()
 
 export type DigitalProduct = {
   id: string
@@ -229,6 +232,22 @@ function tooManyLogins(ip: string) {
   return false
 }
 
+function tooManyFreeDownloads(ip: string) {
+  const now = Date.now()
+  const recent = (freeDownloadsByIp.get(ip) || []).filter((at) => now - at < FREE_DL_WINDOW_MS)
+  if (recent.length >= FREE_DL_MAX) {
+    freeDownloadsByIp.set(ip, recent)
+    return true
+  }
+  recent.push(now)
+  freeDownloadsByIp.set(ip, recent)
+  return false
+}
+
+function isFreeProduct(product: DigitalProduct): boolean {
+  return parsePricePence(product.price) === 0
+}
+
 function safeEqual(a: string, b: string) {
   const aa = Buffer.from(a)
   const bb = Buffer.from(b)
@@ -267,7 +286,7 @@ function defaultCatalog(): Catalog {
       tagline: 'Starter download',
       description: 'Digital download — update title and price in Digital Products admin.',
       cta: 'Get Product 1',
-      paymentUrl: 'https://buy.stripe.com/aFa9AT48K1Jif2F3gq2sM03',
+      paymentUrl: 'https://buy.stripe.com/4gM5kD48K1JicUx7wG2sM07',
     },
     {
       id: 'product-2',
@@ -545,6 +564,13 @@ async function paymentLinkPriceIds(
 async function createCheckoutSessionForProduct(
   product: DigitalProduct,
 ): Promise<{ ok: true; url: string; sessionId: string } | { ok: false; error: string }> {
+  if (isFreeProduct(product)) {
+    return {
+      ok: false,
+      error: 'This product is free — use the free download page instead of Stripe.',
+    }
+  }
+
   const secret = stripeSecret()
   if (!secret) return { ok: false, error: 'Stripe secret is not configured.' }
   if (!product.paymentUrl) return { ok: false, error: 'Product has no Payment Link URL.' }
@@ -843,6 +869,7 @@ async function handleDigitalProducts(req: Req, res: Res) {
     if (method !== 'GET') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
     const catalog = await readCatalog()
     const claimed = normalizeProductId(String(q.product || '').trim())
+    const freeFlag = q.free === '1' || q.free === 'true'
 
     if (isAuthed(req) && q.preview === '1') {
       if (!/^product-[1-4]$/.test(claimed)) {
@@ -853,6 +880,25 @@ async function handleDigitalProducts(req: Req, res: Res) {
         return json(res, 404, { ok: false, error: 'No PDF uploaded for this product yet.' })
       }
       return streamPdf(res, previewProduct.blobPathname, previewProduct.fileName)
+    }
+
+    // FREE products: no Stripe — only when catalogue price is FREE/£0.
+    if (freeFlag) {
+      if (!/^product-[1-4]$/.test(claimed)) {
+        return json(res, 400, { ok: false, error: 'Invalid product.' })
+      }
+      const freeProduct = catalog.products.find((p) => p.id === claimed)
+      if (!freeProduct || !isFreeProduct(freeProduct)) {
+        return json(res, 403, { ok: false, error: 'This product is not free.' })
+      }
+      if (!freeProduct.blobPathname) {
+        return json(res, 404, { ok: false, error: 'No PDF uploaded for this product yet.' })
+      }
+      const ip = clientIp(req)
+      if (tooManyFreeDownloads(ip)) {
+        return json(res, 429, { ok: false, error: 'Too many free downloads. Try again later.' })
+      }
+      return streamPdf(res, freeProduct.blobPathname, freeProduct.fileName)
     }
 
     const sessionId = String(q.session_id || q.sessionId || q.checkout_session_id || '').trim()

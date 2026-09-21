@@ -34,6 +34,18 @@ const queryProductId = computed(() => normalizeProductId(String(route.query.prod
 const sessionId = computed(() =>
   String(route.query.session_id || route.query.sessionId || route.query.checkout_session_id || '').trim(),
 )
+const freeUnlock = computed(() => {
+  const raw = String(route.query.free || '').trim().toLowerCase()
+  return raw === '1' || raw === 'true' || raw === 'yes'
+})
+
+function isFreePrice(price: string): boolean {
+  const raw = String(price || '')
+    .trim()
+    .toLowerCase()
+    .replace(/,/g, '')
+  return raw === 'free' || raw === '£0' || raw === '£0.00' || raw === '0' || raw === '0.00'
+}
 
 const purchasedId = computed(() => resolvedProductId.value || queryProductId.value)
 
@@ -41,6 +53,10 @@ const purchasedIndex = computed(() => ladder.value.findIndex((item) => item.id =
 
 const purchasedProduct = computed(() =>
   purchasedIndex.value >= 0 ? ladder.value[purchasedIndex.value] : null,
+)
+
+const isFreeGift = computed(
+  () => freeUnlock.value && Boolean(purchasedProduct.value && isFreePrice(purchasedProduct.value.price)),
 )
 
 /** Ladder: after product N, offer only product N+1. Top tier → none. */
@@ -54,7 +70,7 @@ const atTopTier = computed(
 )
 
 const canDownload = computed(
-  () => Boolean(purchasedProduct.value?.hasPdf && sessionId.value),
+  () => Boolean(purchasedProduct.value?.hasPdf && (sessionId.value || isFreeGift.value)),
 )
 
 async function loadProducts() {
@@ -72,6 +88,10 @@ async function loadProducts() {
 async function resolveFromSession() {
   resolveError.value = ''
   resolvedProductId.value = ''
+  if (freeUnlock.value && queryProductId.value) {
+    resolvedProductId.value = queryProductId.value
+    return
+  }
   if (!sessionId.value) return
   resolveBusy.value = true
   try {
@@ -107,18 +127,21 @@ async function resolveFromSession() {
 }
 
 function downloadHref() {
-  if (!sessionId.value) return '#'
-  const params = new URLSearchParams({
-    action: 'download',
-    session_id: sessionId.value,
-  })
+  const params = new URLSearchParams({ action: 'download' })
   if (purchasedId.value) params.set('product', purchasedId.value)
+  if (isFreeGift.value) {
+    params.set('free', '1')
+  } else if (sessionId.value) {
+    params.set('session_id', sessionId.value)
+  } else {
+    return '#'
+  }
   return `/api/digital-products?${params.toString()}`
 }
 
 async function downloadPdf() {
   downloadError.value = ''
-  if (!sessionId.value) {
+  if (!isFreeGift.value && !sessionId.value) {
     downloadError.value =
       'Missing Stripe session — set After payment redirect to include session_id={CHECKOUT_SESSION_ID}.'
     return
@@ -176,7 +199,7 @@ async function startCheckout(productId: string) {
 }
 
 watch(
-  () => [sessionId.value, queryProductId.value] as const,
+  () => [sessionId.value, queryProductId.value, freeUnlock.value] as const,
   () => {
     void resolveFromSession()
   },
@@ -200,16 +223,24 @@ onMounted(async () => {
     <div class="relative mx-auto max-w-3xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
       <div class="animate-[float-up_0.7s_ease-out_both] text-center">
         <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-gold-soft">
-          {{ thankYou.eyebrow }}
+          {{ isFreeGift ? 'Free download' : thankYou.eyebrow }}
         </p>
         <h1 class="mt-4 font-display text-3xl font-bold text-white sm:text-5xl">
-          {{ thankYou.title }}
+          {{ isFreeGift ? 'Your free guide is ready' : thankYou.title }}
         </h1>
         <p class="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">
-          {{ thankYou.subtitle }}
+          {{
+            isFreeGift
+              ? 'Download your free PDF below. No card. No Stripe checkout.'
+              : thankYou.subtitle
+          }}
         </p>
         <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-300">
-          {{ thankYou.note }}
+          {{
+            isFreeGift
+              ? 'When you are ready, the next product on this page upgrades your toolkit.'
+              : thankYou.note
+          }}
         </p>
 
         <p v-if="resolveBusy" class="mt-6 text-sm text-slate-300">Confirming your purchase…</p>
@@ -222,10 +253,10 @@ onMounted(async () => {
             :disabled="downloadBusy || !canDownload"
             @click="downloadPdf"
           >
-            {{ downloadBusy ? 'Preparing…' : 'Download your PDF' }}
+            {{ downloadBusy ? 'Preparing…' : isFreeGift ? 'Download free PDF' : 'Download your PDF' }}
           </button>
           <p v-if="downloadError" class="mt-3 text-sm text-rose-200">{{ downloadError }}</p>
-          <p v-else-if="!sessionId" class="mt-3 text-xs text-slate-300">
+          <p v-else-if="!sessionId && !isFreeGift" class="mt-3 text-xs text-slate-300">
             If download fails, set Stripe After payment redirect to
             <code class="text-yom-gold-soft">thank-you?session_id={'{'}CHECKOUT_SESSION_ID{'}'}</code>
             on every Payment Link.

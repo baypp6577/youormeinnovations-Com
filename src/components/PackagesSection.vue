@@ -14,9 +14,19 @@ type PublicProduct = {
 
 /** Shared primary CTA classes — same gold pill as hero / about / header. */
 const primaryCtaClass =
-  'mt-auto inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-5 py-3 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/20 transition hover:brightness-105'
+  'mt-auto inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-yom-gold to-yom-gold-soft px-5 py-3 text-sm font-semibold text-yom-navy shadow-md shadow-yom-gold/20 transition hover:brightness-105 disabled:cursor-wait disabled:opacity-70'
 
 const items = ref<PackageItem[]>(packages.items.map((item) => ({ ...item })))
+const busyId = ref('')
+const checkoutError = ref('')
+
+function isFreePrice(price: string): boolean {
+  const raw = String(price || '')
+    .trim()
+    .toLowerCase()
+    .replace(/,/g, '')
+  return raw === 'free' || raw === '£0' || raw === '£0.00' || raw === '0' || raw === '0.00'
+}
 
 onMounted(async () => {
   try {
@@ -36,6 +46,35 @@ onMounted(async () => {
     /* keep static catalogue */
   }
 })
+
+async function startCheckout(item: PackageItem) {
+  checkoutError.value = ''
+  if (!item.id) return
+
+  if (isFreePrice(item.price)) {
+    window.location.href = `/thank-you?product=${encodeURIComponent(item.id)}&free=1`
+    return
+  }
+
+  busyId.value = item.id
+  try {
+    const res = await fetch('/api/digital-products?action=create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: item.id }),
+    })
+    const data = (await res.json()) as { ok?: boolean; url?: string; error?: string }
+    if (!res.ok || !data.ok || !data.url) {
+      checkoutError.value = data.error || 'Could not start checkout. Please try again.'
+      return
+    }
+    window.location.href = data.url
+  } catch {
+    checkoutError.value = 'Could not start checkout. Please try again.'
+  } finally {
+    busyId.value = ''
+  }
+}
 </script>
 
 <template>
@@ -45,6 +84,8 @@ onMounted(async () => {
         <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-blue">{{ packages.eyebrow }}</p>
         <h2 class="mt-3 font-display text-3xl font-bold text-yom-navy sm:text-4xl">{{ packages.title }}</h2>
       </div>
+
+      <p v-if="checkoutError" class="mb-6 text-center text-sm text-rose-600">{{ checkoutError }}</p>
 
       <div class="grid gap-6 sm:grid-cols-2">
         <article
@@ -61,13 +102,20 @@ onMounted(async () => {
           <p v-if="item.idealFor" class="mt-4 text-sm font-medium text-slate-700">
             Ideal for: {{ item.idealFor }}
           </p>
-          <a
-            v-if="item.paymentUrl"
-            :href="item.paymentUrl"
+          <button
+            type="button"
             :class="primaryCtaClass"
+            :disabled="busyId === item.id"
+            @click="startCheckout(item)"
           >
-            {{ item.cta }}
-          </a>
+            {{
+              busyId === item.id
+                ? 'Opening checkout…'
+                : isFreePrice(item.price)
+                  ? item.cta || 'Download free'
+                  : item.cta
+            }}
+          </button>
         </article>
       </div>
     </div>
