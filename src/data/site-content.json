@@ -251,26 +251,44 @@
     ]
   },
   "packages": {
-    "eyebrow": "PR Packages",
-    "title": "PR that fits your stage of growth",
+    "eyebrow": "Digital products",
+    "title": "AI tools that fit your stage of growth",
     "items": [
       {
-        "id": "kickstart-pr",
-        "name": "Kickstart PR",
-        "price": "£99",
-        "tagline": "Start getting noticed.",
-        "description": "A practical PR starter package for businesses that need professional visibility and a stronger story.",
-        "idealFor": "Small businesses, entrepreneurs and new brands.",
-        "cta": "Get Started"
+        "id": "product-1",
+        "name": "FREE AI GUIDE",
+        "price": "FREE",
+        "tagline": "100 AI Prompts to Help Grow Your Business",
+        "description": "A free practical AI guide containing 100 ready-to-use prompts to help small businesses save time, improve marketing, create content, attract customers and grow their business.",
+        "cta": "Get Your Free AI Guide",
+        "paymentUrl": "https://buy.stripe.com/aFa9AT48K1Jif2F3gq2sM03"
       },
       {
-        "id": "momentum-pr",
-        "name": "Momentum PR",
-        "price": "£249 / month",
-        "tagline": "Build visibility consistently.",
-        "description": "Ongoing PR and communications support for businesses ready to build credibility, maintain visibility and keep their story moving.",
-        "idealFor": "Growing businesses, established entrepreneurs and organisations seeking ongoing communications support.",
-        "cta": "Build Momentum"
+        "id": "product-2",
+        "name": "YOM AI BUSINESS GROWTH SYSTEM",
+        "price": "£19",
+        "tagline": "Turn AI into your everyday business growth system",
+        "description": "A practical AI-powered business growth toolkit for small businesses and entrepreneurs. Includes 100+ ready-to-use AI prompts, business templates, marketing tools, customer-growth strategies and worksheets.",
+        "cta": "Get the YOM AI Business Growth System",
+        "paymentUrl": "https://buy.stripe.com/fZuaEXeNoew45s5bMW2sM04"
+      },
+      {
+        "id": "product-3",
+        "name": "YOM AI Business Growth System: Premium",
+        "price": "£49",
+        "tagline": "YOM AI Business Growth System — Premium",
+        "description": "A premium digital business-growth toolkit designed to help you use AI to attract customers, improve your marketing, create content faster and build a more consistent sales system.",
+        "cta": "Get the £49 Premium System",
+        "paymentUrl": "https://buy.stripe.com/fZu14n9t45Zy8Eh04e2sM05"
+      },
+      {
+        "id": "product-4",
+        "name": "YOM AI Business Growth System: Pro / Complete",
+        "price": "£99",
+        "tagline": "Your complete AI-powered system for growing your Business",
+        "description": "The complete AI-powered system for growing your business — prompts, templates and implementation guidance in one download.",
+        "cta": "Get The complete system",
+        "paymentUrl": "https://buy.stripe.com/4gMbJ18p09bK1bP9EO2sM06"
       }
     ]
   },
@@ -336,38 +354,38 @@
       "items": [
         {
           "id": "product-1",
-          "name": "Product 1",
-          "price": "See Stripe",
-          "tagline": "Starter download",
-          "description": "Confirm the exact title and price with your Stripe Payment Link details.",
-          "cta": "Get Product 1",
+          "name": "FREE AI GUIDE",
+          "price": "FREE",
+          "tagline": "100 AI Prompts to Help Grow Your Business",
+          "description": "A free practical AI guide containing 100 ready-to-use prompts.",
+          "cta": "Get Your Free AI Guide",
           "paymentUrl": "https://buy.stripe.com/aFa9AT48K1Jif2F3gq2sM03"
         },
         {
           "id": "product-2",
-          "name": "Product 2",
-          "price": "See Stripe",
-          "tagline": "Next level",
-          "description": "Confirm the exact title and price with your Stripe Payment Link details.",
-          "cta": "Upgrade to Product 2",
+          "name": "YOM AI BUSINESS GROWTH SYSTEM",
+          "price": "£19",
+          "tagline": "Turn AI into your everyday business growth system",
+          "description": "A practical AI-powered business growth toolkit.",
+          "cta": "Get the YOM AI Business Growth System",
           "paymentUrl": "https://buy.stripe.com/fZuaEXeNoew45s5bMW2sM04"
         },
         {
           "id": "product-3",
-          "name": "Product 3",
-          "price": "See Stripe",
-          "tagline": "Higher tier",
-          "description": "Confirm the exact title and price with your Stripe Payment Link details.",
-          "cta": "Upgrade to Product 3",
+          "name": "YOM AI Business Growth System: Premium",
+          "price": "£49",
+          "tagline": "YOM AI Business Growth System — Premium",
+          "description": "A premium digital business-growth toolkit.",
+          "cta": "Get the £49 Premium System",
           "paymentUrl": "https://buy.stripe.com/fZu14n9t45Zy8Eh04e2sM05"
         },
         {
           "id": "product-4",
-          "name": "Product 4",
-          "price": "See Stripe",
-          "tagline": "Top tier",
-          "description": "Confirm the exact title and price with your Stripe Payment Link details.",
-          "cta": "Upgrade to Product 4",
+          "name": "YOM AI Business Growth System: Pro / Complete",
+          "price": "£99",
+          "tagline": "Your complete AI-powered system for growing your Business",
+          "description": "The complete AI-powered system for growing your business.",
+          "cta": "Get The complete system",
           "paymentUrl": "https://buy.stripe.com/4gMbJ18p09bK1bP9EO2sM06"
         }
       ]

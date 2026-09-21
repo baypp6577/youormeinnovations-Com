@@ -143,10 +143,10 @@ export function buildKnowledge(): KnowledgeChunk[] {
     id: 'packages',
     title: packages.title,
     href: '#packages',
-    navLabel: 'View PR packages',
-    keywords: ['price', 'pricing', 'cost', 'package', 'kickstart', 'momentum', 'pr', '£99', '£249'],
+    navLabel: 'View digital products',
+    keywords: ['price', 'pricing', 'cost', 'package', 'product', 'ai', 'guide', 'free', '£19', '£49', '£99'],
     text: packages.items
-      .map((item) => `${item.name} — ${item.price}. ${item.tagline} ${item.description} Ideal for: ${item.idealFor}`)
+      .map((item) => `${item.name} — ${item.price}. ${item.tagline} ${item.description}`)
       .join('\n\n'),
   })
 
@@ -220,19 +220,19 @@ export function answerQuestion(userInput: string): AssistantReply {
   const q = input.toLowerCase()
 
   if (!input) {
-    return { text: 'Ask me about a service, PR package, our process, or how to start a project.' }
+    return { text: 'Ask me about a service, a digital product, our process, or how to start a project.' }
   }
 
   if (/\b(hello|hi|hey|good morning|good afternoon|good evening)\b/.test(q)) {
     return {
-      text: `Hello — welcome to ${brand.name}. I can explain our services, PR packages, process and how to start a project.\n\n${serviceListText()}\n\nWhat would you like to know?`,
+      text: `Hello — welcome to ${brand.name}. I can explain our services, digital products, process and how to start a project.\n\n${serviceListText()}\n\nWhat would you like to know?`,
       navigation: { url: '#services-detail', label: 'Explore Our Services' },
     }
   }
 
   if (/\b(thanks|thank you|cheers|appreciate)\b/.test(q)) {
     return {
-      text: 'You’re welcome. I can also walk you through a service, PR package, or how to start a project.',
+      text: 'You’re welcome. I can also walk you through a service, a digital product, or how to start a project.',
     }
   }
 
@@ -250,15 +250,12 @@ export function answerQuestion(userInput: string): AssistantReply {
     }
   }
 
-  if (/\b(price|pricing|cost|how much|package|kickstart|momentum|£99|£249)\b/.test(q)) {
+  if (/\b(price|pricing|cost|how much|package|product|ai guide|free|£19|£49|£99)\b/.test(q)) {
     return {
       text: `${packages.title}\n\n${packages.items
-        .map(
-          (item) =>
-            `• ${item.name} — ${item.price}\n  ${item.tagline}\n  ${item.description}\n  Ideal for: ${item.idealFor}`
-        )
+        .map((item) => `• ${item.name} — ${item.price}\n  ${item.tagline}\n  ${item.description}`)
         .join('\n\n')}`,
-      navigation: { url: '#packages', label: 'View PR packages' },
+      navigation: { url: '#packages', label: 'View digital products' },
     }
   }
 
@@ -314,7 +311,7 @@ export function answerQuestion(userInput: string): AssistantReply {
   }
 
   return {
-    text: `I can answer from our live service brief. Ask about any of these:\n\n${serviceListText()}\n\nYou can also ask about PR packages, our process, or how to start a project.`,
+    text: `I can answer from our live service brief. Ask about any of these:\n\n${serviceListText()}\n\nYou can also ask about digital products, our process, or how to start a project.`,
     navigation: { url: '#services-detail', label: 'Explore Our Services' },
   }
 }

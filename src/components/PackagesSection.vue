@@ -1,6 +1,37 @@
 <script setup lang="ts">
-import ContactCta from '@/components/ContactCta.vue'
-import { packages } from '@/data/site'
+import { onMounted, ref } from 'vue'
+import { packages, type PackageItem } from '@/data/site'
+
+type PublicProduct = {
+  id: string
+  name: string
+  price: string
+  tagline: string
+  description: string
+  cta: string
+  paymentUrl: string
+}
+
+const items = ref<PackageItem[]>(packages.items.map((item) => ({ ...item })))
+
+onMounted(async () => {
+  try {
+    const res = await fetch('/api/digital-products?action=public-list')
+    const data = (await res.json()) as { ok?: boolean; products?: PublicProduct[] }
+    if (!data.ok || !Array.isArray(data.products) || data.products.length === 0) return
+    items.value = data.products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      tagline: product.tagline,
+      description: product.description,
+      cta: product.cta,
+      paymentUrl: product.paymentUrl,
+    }))
+  } catch {
+    /* keep static catalogue */
+  }
+})
 </script>
 
 <template>
@@ -11,26 +42,28 @@ import { packages } from '@/data/site'
         <h2 class="mt-3 font-display text-3xl font-bold text-yom-navy sm:text-4xl">{{ packages.title }}</h2>
       </div>
 
-      <div class="grid gap-6 lg:grid-cols-2">
+      <div class="grid gap-6 sm:grid-cols-2">
         <article
-          v-for="item in packages.items"
+          v-for="item in items"
           :key="item.id"
           class="rounded-3xl border border-slate-200/80 bg-yom-surface p-8 shadow-xl shadow-slate-200/40"
         >
           <p class="text-sm font-semibold uppercase tracking-[0.2em] text-yom-blue">{{ item.name }}</p>
-          <div class="mt-4 flex items-end gap-3">
+          <div class="mt-4 flex flex-wrap items-end gap-3">
             <p class="font-display text-4xl font-bold text-yom-navy">{{ item.price }}</p>
             <p class="pb-1 text-sm text-slate-500">{{ item.tagline }}</p>
           </div>
           <p class="mt-4 text-sm leading-relaxed text-slate-600">{{ item.description }}</p>
-          <p class="mt-4 text-sm font-medium text-slate-700">
+          <p v-if="item.idealFor" class="mt-4 text-sm font-medium text-slate-700">
             Ideal for: {{ item.idealFor }}
           </p>
-          <ContactCta
-            :label="item.cta"
-            :subject="`${item.cta} — ${item.name}`"
-            :source="`PR package: ${item.name}`"
-          />
+          <a
+            v-if="item.paymentUrl"
+            :href="item.paymentUrl"
+            class="mt-5 inline-block text-sm font-semibold text-yom-blue transition hover:text-yom-navy"
+          >
+            {{ item.cta }}
+          </a>
         </article>
       </div>
     </div>

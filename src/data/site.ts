@@ -34,8 +34,9 @@ export type PackageItem = {
   price: string
   tagline: string
   description: string
-  idealFor: string
+  idealFor?: string
   cta: string
+  paymentUrl?: string
 }
 
 export type ResultMetric = {

@@ -23,7 +23,7 @@ const welcome: ChatMessage = {
   id: 'welcome',
   sender: 'bot',
   timestamp: new Date().toISOString(),
-  text: `Hello! I’m the ${brand.name} assistant. I can explain our services, PR packages, process, and how to start a project. What would you like to know?`,
+  text: `Hello! I’m the ${brand.name} assistant. I can explain our services, digital products, process, and how to start a project. What would you like to know?`,
   navigation: { url: '#services-detail', label: 'Explore Our Services' },
 }
 
