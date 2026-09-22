@@ -8,6 +8,9 @@ const LOGIN_MAX = 5
 const LOGIN_WINDOW_MS = 15 * 60 * 1000
 const FREE_DL_MAX = 30
 const FREE_DL_WINDOW_MS = 15 * 60 * 1000
+/** Paid thank-you / download links stay valid this long after Checkout Session creation. */
+const DOWNLOAD_SESSION_TTL_MS = 48 * 60 * 60 * 1000
+const DOWNLOAD_EXPIRED_CODE = 'download_link_expired'
 const MAX_PDF_BYTES = 4 * 1024 * 1024
 const loginsByIp = new Map<string, number[]>()
 const freeDownloadsByIp = new Map<string, number[]>()
@@ -652,12 +655,16 @@ async function syncPaymentLinkRedirect(
   return { ok: true, paymentLinkId: plink.id }
 }
 
+type ResolveSessionResult =
+  | { ok: true; productId: string }
+  | { ok: false; error: string; code?: typeof DOWNLOAD_EXPIRED_CODE }
+
 /** Resolve which ladder product a paid Checkout Session belongs to (metadata, Payment Link URL, or amount). */
 async function resolvePaidProductFromSession(
   sessionId: string,
   catalog: Catalog,
   claimedProductId = '',
-): Promise<{ ok: true; productId: string } | { ok: false; error: string }> {
+): Promise<ResolveSessionResult> {
   const id = String(sessionId || '').trim()
   if (!/^cs_[a-zA-Z0-9_]+$/.test(id)) {
     return { ok: false, error: 'Invalid checkout session.' }
@@ -669,6 +676,8 @@ async function resolvePaidProductFromSession(
   }
 
   type StripeSession = {
+    id?: string
+    created?: number
     payment_status?: string
     status?: string
     metadata?: Record<string, string>
@@ -715,6 +724,19 @@ async function resolvePaidProductFromSession(
 
   if (session.payment_status !== 'paid' && session.status !== 'complete') {
     return { ok: false, error: 'Payment not completed.' }
+  }
+
+  const createdSec = typeof session.created === 'number' ? session.created : 0
+  if (createdSec > 0) {
+    const ageMs = Date.now() - createdSec * 1000
+    if (ageMs > DOWNLOAD_SESSION_TTL_MS) {
+      return {
+        ok: false,
+        code: DOWNLOAD_EXPIRED_CODE,
+        error:
+          'This download link has expired (48 hours). Use the contact form to request a re-send.',
+      }
+    }
   }
 
   const claimed = normalizeProductId(claimedProductId)
@@ -876,7 +898,11 @@ async function handleDigitalProducts(req: Req, res: Res) {
     const claimed = normalizeProductId(String(q.product || '').trim())
     const resolved = await resolvePaidProductFromSession(sessionId, catalog, claimed)
     if (!resolved.ok) {
-      return json(res, 403, { ok: false, error: resolved.error })
+      return json(res, 403, {
+        ok: false,
+        error: resolved.error,
+        ...(resolved.code ? { code: resolved.code } : {}),
+      })
     }
     const product = catalog.products.find((p) => p.id === resolved.productId)
     return json(res, 200, {
@@ -884,6 +910,7 @@ async function handleDigitalProducts(req: Req, res: Res) {
       productId: resolved.productId,
       hasPdf: Boolean(product?.blobPathname),
       product: product ? publicProduct(product) : null,
+      downloadValidHours: Math.round(DOWNLOAD_SESSION_TTL_MS / (60 * 60 * 1000)),
     })
   }
 
@@ -926,7 +953,11 @@ async function handleDigitalProducts(req: Req, res: Res) {
     const sessionId = String(q.session_id || q.sessionId || q.checkout_session_id || '').trim()
     const resolved = await resolvePaidProductFromSession(sessionId, catalog, claimed)
     if (!resolved.ok) {
-      return json(res, 403, { ok: false, error: resolved.error || 'Not authorised.' })
+      return json(res, 403, {
+        ok: false,
+        error: resolved.error || 'Not authorised.',
+        ...(resolved.code ? { code: resolved.code } : {}),
+      })
     }
     if (claimed && claimed !== resolved.productId) {
       return json(res, 403, { ok: false, error: 'Payment does not match this product.' })

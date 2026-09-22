@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { thankYou } from '@/data/site'
+import { setContactPrefill } from '@/lib/contact'
 
 type PublicProduct = {
   id: string
@@ -14,12 +15,15 @@ type PublicProduct = {
   hasPdf: boolean
 }
 
+const DOWNLOAD_EXPIRED_CODE = 'download_link_expired'
+
 const route = useRoute()
 const ladder = ref(thankYou.upgrades.items.map((item) => ({ ...item, hasPdf: false } as PublicProduct)))
 const downloadError = ref('')
 const downloadBusy = ref(false)
 const resolveBusy = ref(false)
 const resolveError = ref('')
+const resolveExpired = ref(false)
 const resolvedProductId = ref('')
 
 function normalizeProductId(raw: string): string {
@@ -70,8 +74,27 @@ const atTopTier = computed(
 )
 
 const canDownload = computed(
-  () => Boolean(purchasedProduct.value?.hasPdf && (sessionId.value || isFreeGift.value)),
+  () => Boolean(purchasedProduct.value?.hasPdf && (sessionId.value || isFreeGift.value) && !resolveExpired.value),
 )
+
+/** htnet-style dynamic subject: action — product (not put in the URL). */
+const contactSubject = computed(() => {
+  const productName = purchasedProduct.value?.name?.trim() || queryProductId.value || 'digital product'
+  if (resolveExpired.value) {
+    return `Digital download re-send — ${productName}`
+  }
+  return thankYou.contactCta.contactSubject || `Help after purchase — ${productName}`
+})
+
+const contactSource = computed(() =>
+  resolveExpired.value ? 'Thank you page — expired download' : thankYou.contactCta.contactSource || 'Thank you page',
+)
+
+function goToContact(event?: Event) {
+  event?.preventDefault()
+  setContactPrefill(contactSubject.value, contactSource.value)
+  window.location.href = '/#contact-section'
+}
 
 async function loadProducts() {
   try {
@@ -87,6 +110,7 @@ async function loadProducts() {
 
 async function resolveFromSession() {
   resolveError.value = ''
+  resolveExpired.value = false
   resolvedProductId.value = ''
   if (freeUnlock.value && queryProductId.value) {
     resolvedProductId.value = queryProductId.value
@@ -106,12 +130,16 @@ async function resolveFromSession() {
       productId?: string
       hasPdf?: boolean
       error?: string
+      code?: string
       product?: PublicProduct | null
     } | null
     if (!res.ok || !data?.ok || !data.productId) {
+      resolveExpired.value = data?.code === DOWNLOAD_EXPIRED_CODE
       resolveError.value =
         data?.error ||
-        (res.status >= 500 ? 'Download service is restarting. Wait a minute and refresh.' : 'Could not match this payment to a product.')
+        (res.status >= 500
+          ? 'Download service is restarting. Wait a minute and refresh.'
+          : 'Could not match this payment to a product.')
       return
     }
     resolvedProductId.value = data.productId
@@ -155,7 +183,11 @@ async function downloadPdf() {
     const res = await fetch(downloadHref(), { credentials: 'same-origin' })
     const ct = res.headers.get('content-type') || ''
     if (!res.ok || !ct.includes('pdf')) {
-      const data = (await res.json().catch(() => null)) as { error?: string } | null
+      const data = (await res.json().catch(() => null)) as { error?: string; code?: string } | null
+      if (data?.code === DOWNLOAD_EXPIRED_CODE) {
+        resolveExpired.value = true
+        resolveError.value = data.error || 'This download link has expired.'
+      }
       downloadError.value = data?.error || 'Download failed.'
       return
     }
@@ -223,19 +255,27 @@ onMounted(async () => {
     <div class="relative mx-auto max-w-3xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
       <div class="animate-[float-up_0.7s_ease-out_both] text-center">
         <p class="text-xs font-semibold uppercase tracking-[0.24em] text-yom-gold-soft">
-          {{ isFreeGift ? 'Free download' : thankYou.eyebrow }}
+          {{ resolveExpired ? 'Link expired' : isFreeGift ? 'Free download' : thankYou.eyebrow }}
         </p>
         <h1 class="mt-4 font-display text-3xl font-bold text-white sm:text-5xl">
-          {{ isFreeGift ? 'Your free guide is ready' : thankYou.title }}
+          {{
+            resolveExpired
+              ? 'Your download link has expired'
+              : isFreeGift
+                ? 'Your free guide is ready'
+                : thankYou.title
+          }}
         </h1>
         <p class="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">
           {{
-            isFreeGift
-              ? 'Download your free PDF below. No card. No Stripe checkout.'
-              : thankYou.subtitle
+            resolveExpired
+              ? 'Download links stay active for 48 hours after purchase. Use the contact form to request a re-send — the subject is filled in for you.'
+              : isFreeGift
+                ? 'Download your free PDF below. No card. No Stripe checkout.'
+                : thankYou.subtitle
           }}
         </p>
-        <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-300">
+        <p v-if="!resolveExpired" class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-300">
           {{
             isFreeGift
               ? 'When you are ready, the next product on this page upgrades your toolkit.'
@@ -244,9 +284,9 @@ onMounted(async () => {
         </p>
 
         <p v-if="resolveBusy" class="mt-6 text-sm text-slate-300">Confirming your purchase…</p>
-        <p v-else-if="resolveError" class="mt-6 text-sm text-rose-200">{{ resolveError }}</p>
+        <p v-else-if="resolveError && !resolveExpired" class="mt-6 text-sm text-rose-200">{{ resolveError }}</p>
 
-        <div v-if="purchasedProduct" class="mt-8">
+        <div v-if="purchasedProduct && !resolveExpired" class="mt-8">
           <button
             type="button"
             class="inline-flex rounded-full bg-yom-gold px-6 py-3 text-sm font-semibold text-yom-navy transition hover:bg-yom-gold-soft disabled:opacity-60"
@@ -271,12 +311,13 @@ onMounted(async () => {
             {{ thankYou.homeCta.label }}
           </RouterLink>
           <a
-            :href="thankYou.contactCta.href"
-            :data-contact-subject="thankYou.contactCta.contactSubject"
-            :data-contact-source="thankYou.contactCta.contactSource"
+            href="/#contact-section"
+            :data-contact-subject="contactSubject"
+            :data-contact-source="contactSource"
             class="inline-flex rounded-full border border-white/30 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+            @click="goToContact"
           >
-            {{ thankYou.contactCta.label }}
+            {{ resolveExpired ? 'Request a re-send' : thankYou.contactCta.label }}
           </a>
         </div>
       </div>
@@ -284,7 +325,7 @@ onMounted(async () => {
   </section>
 
   <section
-    v-if="nextUpgrade"
+    v-if="nextUpgrade && !resolveExpired"
     class="bg-yom-surface py-16 sm:py-20"
     aria-labelledby="thank-you-upgrade"
   >
@@ -325,7 +366,7 @@ onMounted(async () => {
   </section>
 
   <section
-    v-else-if="atTopTier"
+    v-else-if="atTopTier && !resolveExpired"
     class="bg-yom-surface py-16 sm:py-20"
     aria-labelledby="thank-you-complete"
   >

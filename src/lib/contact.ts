@@ -44,7 +44,7 @@ export function bindContactHashClicks() {
   document.addEventListener('click', (event) => {
     const target = event.target
     if (!(target instanceof Element)) return
-    const link = target.closest('a[href="#contact-section"]')
+    const link = target.closest('a[href="#contact-section"], a[href="/#contact-section"]')
     if (!(link instanceof HTMLAnchorElement)) return
 
     const label = link.dataset.contactSubject || link.textContent?.trim() || 'General enquiry'
