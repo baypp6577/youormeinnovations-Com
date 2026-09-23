@@ -205,8 +205,19 @@ function header(req: Req, name: string): string {
 }
 
 function isSecure(req: Req) {
+  const host = header(req, 'host').toLowerCase().split(':')[0]
+  // Local Vite / API only — never mark Secure on localhost or cookies will not set over http://127.0.0.1
+  if (host === 'localhost' || host === '127.0.0.1') return false
+  // Live / Vercel preview: always HTTPS-only admin cookies
   if (process.env.VERCEL) return true
   return header(req, 'x-forwarded-proto').includes('https')
+}
+
+function requireHttps(req: Req): boolean {
+  const host = header(req, 'host').toLowerCase().split(':')[0]
+  if (host === 'localhost' || host === '127.0.0.1') return false
+  if (process.env.VERCEL) return !header(req, 'x-forwarded-proto').includes('https')
+  return false
 }
 
 function parseCookies(req: Req): Record<string, string> {
@@ -224,8 +235,9 @@ function sign(payload: string): string {
   return crypto.createHmac('sha256', adminSecret() || 'missing').update(payload).digest('hex')
 }
 
-function makeSession(): string {
-  const exp = Date.now() + SESSION_HOURS * 60 * 60 * 1000
+function makeSession(hours: number): string {
+  const ttlHours = Number.isFinite(hours) && hours > 0 ? hours : SESSION_HOURS
+  const exp = Date.now() + ttlHours * 60 * 60 * 1000
   const payload = Buffer.from(JSON.stringify({ exp }), 'utf8').toString('base64url')
   return `${payload}.${sign(payload)}`
 }
@@ -247,10 +259,11 @@ function sessionOk(token: string): boolean {
   }
 }
 
-function setSessionCookie(req: Req, res: Res, token: string | null) {
+function setSessionCookie(req: Req, res: Res, token: string | null, hours = SESSION_HOURS) {
   const secure = isSecure(req) ? '; Secure' : ''
+  const maxAge = Math.max(1, Math.floor(hours * 3600))
   const value = token
-    ? `${COOKIE}=${token}; HttpOnly; Path=/; Max-Age=${SESSION_HOURS * 3600}; SameSite=Strict${secure}`
+    ? `${COOKIE}=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=Strict${secure}`
     : `${COOKIE}=; HttpOnly; Path=/; Max-Age=0; SameSite=Strict${secure}`
   res.setHeader?.('Set-Cookie', value)
 }
@@ -974,18 +987,30 @@ async function handleDigitalProducts(req: Req, res: Res) {
 
   if (action === 'login') {
     if (method !== 'POST') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
+    if (requireHttps(req)) {
+      return json(res, 403, { ok: false, error: 'HTTPS is required for admin sign-in.' })
+    }
     const password = String(body.password || '')
     const expected = adminPassword()
     if (!expected) return json(res, 503, { ok: false, error: 'Admin password is not configured.' })
     const ip = clientIp(req)
     if (tooManyLogins(ip)) return json(res, 429, { ok: false, error: 'Too many attempts. Try again later.' })
     if (!safeEqual(password, expected)) return json(res, 401, { ok: false, error: 'Incorrect password.' })
-    setSessionCookie(req, res, makeSession())
-    return json(res, 200, { ok: true, authed: true })
+    const remember =
+      body.remember === true ||
+      body.rememberDevice === true ||
+      body.remember === '1' ||
+      body.rememberDevice === '1'
+    const hours = remember ? SESSION_HOURS_REMEMBER : SESSION_HOURS
+    setSessionCookie(req, res, makeSession(hours), hours)
+    return json(res, 200, { ok: true, authed: true, rememberDevice: Boolean(remember) })
   }
 
   if (action === 'password-reminder') {
     if (method !== 'POST') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
+    if (requireHttps(req)) {
+      return json(res, 403, { ok: false, error: 'HTTPS is required for password reminders.' })
+    }
     const expected = adminPassword()
     if (!expected) return json(res, 503, { ok: false, error: 'Admin password is not configured.' })
     const ip = clientIp(req)

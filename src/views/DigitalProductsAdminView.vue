@@ -18,6 +18,7 @@ type Product = {
 const authed = ref(false)
 const checking = ref(true)
 const password = ref('')
+const rememberDevice = ref(true)
 const notice = ref('')
 const noticeErr = ref(false)
 const reminding = ref(false)
@@ -117,7 +118,10 @@ async function loadProducts() {
 
 async function login() {
   flash('')
-  const { data } = await api('login', { password: password.value })
+  const { data } = await api('login', {
+    password: password.value,
+    rememberDevice: rememberDevice.value,
+  })
   if (!data.ok) {
     flash(data.error || 'Could not sign in.', true)
     return
@@ -222,7 +226,7 @@ function previewUrl(id: string) {
 
 const syncingRedirects = ref(false)
 const thankYouRedirect =
-  'https://youormeinnovations.com/thank-you?session_id={CHECKOUT_SESSION_ID}'
+  'https://www.youormeinnovations.com/thank-you?session_id={CHECKOUT_SESSION_ID}'
 
 async function syncStripeRedirects() {
   syncingRedirects.value = true
@@ -289,6 +293,13 @@ onMounted(() => {
           class="mt-2 w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm"
           required
         />
+        <label class="mt-4 flex items-start gap-2 text-sm text-slate-700">
+          <input v-model="rememberDevice" type="checkbox" class="mt-1" />
+          <span>
+            <span class="font-semibold text-yom-navy">Remember this device</span>
+            <span class="mt-0.5 block text-xs text-slate-500">Stay signed in for 30 days on this browser. Use Sign out on shared computers.</span>
+          </span>
+        </label>
         <p v-if="notice" class="mt-3 text-sm" :class="noticeErr ? 'text-red-700' : 'text-emerald-700'">{{ notice }}</p>
         <button type="submit" class="mt-5 inline-flex rounded-full bg-yom-navy px-5 py-2.5 text-sm font-semibold text-white">
           Sign in
