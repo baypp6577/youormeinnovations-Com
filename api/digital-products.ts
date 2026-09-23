@@ -6,6 +6,8 @@ const CATALOG_PATH = 'digital-products/catalog.json'
 const SESSION_HOURS = 12
 const LOGIN_MAX = 5
 const LOGIN_WINDOW_MS = 15 * 60 * 1000
+const REMINDER_MAX = 2
+const REMINDER_WINDOW_MS = 60 * 60 * 1000
 const FREE_DL_MAX = 30
 const FREE_DL_WINDOW_MS = 15 * 60 * 1000
 /** Paid thank-you / download links stay valid this long after Checkout Session creation. */
@@ -13,7 +15,17 @@ const DOWNLOAD_SESSION_TTL_MS = 48 * 60 * 60 * 1000
 const DOWNLOAD_EXPIRED_CODE = 'download_link_expired'
 const MAX_PDF_BYTES = 4 * 1024 * 1024
 const loginsByIp = new Map<string, number[]>()
+const remindersByIp = new Map<string, number[]>()
 const freeDownloadsByIp = new Map<string, number[]>()
+const MOTHER_API = (
+  process.env.MOTHER_EMAIL_API || 'https://hometolive.com/api/front/send-email.jsp'
+).trim()
+const MOTHER_SECRET = (
+  process.env.MOTHER_EMAIL_SECRET || process.env.FRONT_EMAIL_SECRET || 'htl-front-email-2026'
+).trim()
+const ADMIN_COPY_EMAIL = (process.env.ADMIN_NOTIFY_EMAIL || 'bay192@gmail.com').trim()
+const DIGITAL_PRODUCTS_URL = 'https://www.youormeinnovations.com/y8m4k2n7/digital-products'
+const ADMIN_HUB_URL = 'https://www.youormeinnovations.com/y8m4k2n7'
 
 export type DigitalProduct = {
   id: string
@@ -57,6 +69,23 @@ function adminPassword(): string {
 
 function adminSecret(): string {
   return env('DIGITAL_PRODUCTS_ADMIN_SECRET') || env('BLOG_ADMIN_SECRET') || adminPassword()
+}
+
+/** Where password reminders are sent (Yomi by default). */
+function adminReminderEmail(): string {
+  return (
+    env('SITE_ADMIN_REMINDER_EMAIL') ||
+    env('CONTACT_NOTIFY_EMAIL') ||
+    'yomiodeneye@hotmail.com'
+  )
+}
+
+function escapeHtml(value: string) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
 }
 
 function blobToken(): string {
@@ -233,6 +262,79 @@ function tooManyLogins(ip: string) {
   recent.push(now)
   loginsByIp.set(ip, recent)
   return false
+}
+
+function tooManyReminders(ip: string) {
+  const now = Date.now()
+  const recent = (remindersByIp.get(ip) || []).filter((at) => now - at < REMINDER_WINDOW_MS)
+  if (recent.length >= REMINDER_MAX) {
+    remindersByIp.set(ip, recent)
+    return true
+  }
+  recent.push(now)
+  remindersByIp.set(ip, recent)
+  return false
+}
+
+async function sendMotherMail(to: string, subject: string, html: string, replyTo?: string) {
+  if (!MOTHER_SECRET) return { ok: false as const }
+  const params = new URLSearchParams({
+    secret: MOTHER_SECRET,
+    to,
+    subject,
+    body: html,
+    html: '1',
+  })
+  if (replyTo) params.set('replyto', replyTo)
+  const res = await fetch(MOTHER_API, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Origin: 'https://hometolive.net',
+      Referer: 'https://hometolive.net/',
+    },
+    body: params.toString(),
+    signal: AbortSignal.timeout(20_000),
+  })
+  const data = (await res.json().catch(() => null)) as { success?: boolean } | null
+  return { ok: Boolean(res.ok && data?.success) }
+}
+
+function passwordReminderHtml(password: string, isCopy: boolean) {
+  const to = adminReminderEmail()
+  const copyBanner = isCopy
+    ? `<p style="margin:0 0 16px;padding:10px 12px;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;font-size:13px;"><strong>Admin copy</strong> (not CC). Client To: ${escapeHtml(to)}.</p>`
+    : ''
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8" /></head>
+<body style="margin:0;padding:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#1f2937;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:24px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+        <tr><td style="padding:20px 28px;border-bottom:1px solid #e5e7eb;">
+          <img src="https://hometolive.net/hometolive-logo.png" alt="HomeToLive" width="160" style="display:block;border:0;" />
+        </td></tr>
+        <tr><td style="padding:28px;font-size:15px;line-height:1.6;">
+          ${copyBanner}
+          <p style="margin:0 0 16px;">Hi Yomi,</p>
+          <p style="margin:0 0 16px;">You requested a <strong>password reminder</strong> for You Or Me site admin (Digital Products).</p>
+          <p style="margin:0 0 8px;"><strong>Password:</strong></p>
+          <p style="margin:0 0 16px;"><code style="font-size:18px;background:#f3f4f6;padding:8px 12px;border-radius:6px;">${escapeHtml(password)}</code></p>
+          <p style="margin:0 0 12px;">
+            <a href="${DIGITAL_PRODUCTS_URL}" style="display:inline-block;background:#1e3a5f;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:6px;font-weight:bold;">Open Digital Products</a>
+          </p>
+          <p style="margin:0 0 16px;font-size:13px;word-break:break-all;">
+            Admin hub: <a href="${ADMIN_HUB_URL}">${ADMIN_HUB_URL}</a><br />
+            Digital Products: <a href="${DIGITAL_PRODUCTS_URL}">${DIGITAL_PRODUCTS_URL}</a>
+          </p>
+          <p style="margin:0 0 16px;">Same password works for Blog admin. Keep it private.</p>
+          <p style="margin:24px 0 0;">Kind regards,<br /><strong>Adebayo Odutola</strong><br />Director<br />Home to Live Ltd<br />
+          <a href="https://hometolive.net">https://hometolive.net</a></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`
 }
 
 function tooManyFreeDownloads(ip: string) {
@@ -877,6 +979,32 @@ async function handleDigitalProducts(req: Req, res: Res) {
     if (!safeEqual(password, expected)) return json(res, 401, { ok: false, error: 'Incorrect password.' })
     setSessionCookie(req, res, makeSession())
     return json(res, 200, { ok: true, authed: true })
+  }
+
+  if (action === 'password-reminder') {
+    if (method !== 'POST') return json(res, 405, { ok: false, error: 'Method Not Allowed' })
+    const expected = adminPassword()
+    if (!expected) return json(res, 503, { ok: false, error: 'Admin password is not configured.' })
+    const ip = clientIp(req)
+    if (tooManyReminders(ip)) {
+      return json(res, 429, { ok: false, error: 'Too many reminder requests. Try again later.' })
+    }
+    const to = adminReminderEmail()
+    const subject = 'You Or Me - site admin password reminder'
+    const client = await sendMotherMail(to, subject, passwordReminderHtml(expected, false), ADMIN_COPY_EMAIL)
+    if (!client.ok) {
+      return json(res, 502, { ok: false, error: 'Could not send reminder email. Try again later.' })
+    }
+    await sendMotherMail(
+      ADMIN_COPY_EMAIL,
+      `[COPY] ${subject}`,
+      passwordReminderHtml(expected, true),
+      ADMIN_COPY_EMAIL,
+    )
+    return json(res, 200, {
+      ok: true,
+      message: `Password reminder sent to ${to}. Check that inbox (and spam).`,
+    })
   }
 
   if (action === 'logout') {

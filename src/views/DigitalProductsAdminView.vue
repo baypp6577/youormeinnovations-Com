@@ -20,6 +20,7 @@ const checking = ref(true)
 const password = ref('')
 const notice = ref('')
 const noticeErr = ref(false)
+const reminding = ref(false)
 const saving = ref(false)
 const uploadingId = ref('')
 const products = ref<Product[]>([])
@@ -58,6 +59,7 @@ async function api(action: string, payload: Record<string, unknown> = {}, method
   const data = (await res.json()) as {
     ok?: boolean
     error?: string
+    message?: string
     authed?: boolean
     products?: Product[]
     product?: Product
@@ -123,6 +125,24 @@ async function login() {
   password.value = ''
   authed.value = true
   await loadProducts()
+}
+
+async function requestPasswordReminder() {
+  if (reminding.value) return
+  reminding.value = true
+  flash('')
+  try {
+    const { data } = await api('password-reminder', {})
+    if (!data.ok) {
+      flash(data.error || 'Could not send reminder.', true)
+      return
+    }
+    flash(data.message || 'Password reminder sent. Check your email.')
+  } catch {
+    flash('Could not send reminder.', true)
+  } finally {
+    reminding.value = false
+  }
 }
 
 async function logout() {
@@ -272,6 +292,14 @@ onMounted(() => {
         <p v-if="notice" class="mt-3 text-sm" :class="noticeErr ? 'text-red-700' : 'text-emerald-700'">{{ notice }}</p>
         <button type="submit" class="mt-5 inline-flex rounded-full bg-yom-navy px-5 py-2.5 text-sm font-semibold text-white">
           Sign in
+        </button>
+        <button
+          type="button"
+          class="mt-3 ml-0 block text-sm font-semibold text-yom-blue hover:underline disabled:opacity-60"
+          :disabled="reminding"
+          @click="requestPasswordReminder"
+        >
+          {{ reminding ? 'Sending reminder…' : 'Email me a password reminder' }}
         </button>
       </form>
 
