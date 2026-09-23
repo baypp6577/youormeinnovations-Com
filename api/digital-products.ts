@@ -3,7 +3,10 @@ import { put, get, del } from '@vercel/blob'
 
 const COOKIE = 'yom_dp_sess'
 const CATALOG_PATH = 'digital-products/catalog.json'
+/** Default browser session (hours). */
 const SESSION_HOURS = 12
+/** “Remember this device” — 30 days. */
+const SESSION_HOURS_REMEMBER = 30 * 24
 const LOGIN_MAX = 5
 const LOGIN_WINDOW_MS = 15 * 60 * 1000
 const REMINDER_MAX = 2
